@@ -151,6 +151,10 @@ impl<T> shell::Notifier for Proxy<T>
 where
     T: Send,
 {
+    fn tick(&self) {
+        self.send_action(Action::Tick);
+    }
+
     fn request_redraw(&self) {
         self.send_action(Action::Window(window::Action::RedrawAll));
     }

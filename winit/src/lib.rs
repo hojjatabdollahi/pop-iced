@@ -2118,6 +2118,7 @@ where
     C: Compositor<Renderer = P::Renderer> + 'static,
     P::Theme: theme::Base,
 {
+    use crate::core::Renderer as _;
     use crate::runtime::clipboard;
     use crate::runtime::window;
 
@@ -2564,8 +2565,6 @@ where
         }
         Action::Image(action) => match action {
             image::Action::Allocate(handle, sender) => {
-                use core::Renderer as _;
-
                 // TODO: Shared image cache in compositor
                 if let Some((_id, window)) = window_manager.iter_mut().next() {
                     window.renderer.allocate_image(
@@ -2583,6 +2582,11 @@ where
                 compositor.load_font(bytes.clone());
 
                 let _ = channel.send(Ok(()));
+            }
+        }
+        Action::Tick => {
+            for (_id, window) in window_manager.iter_mut() {
+                window.renderer.tick();
             }
         }
         Action::Reload => {

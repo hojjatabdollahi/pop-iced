@@ -87,7 +87,7 @@ impl Cache {
         let _ = self.raster.pending.insert(handle.id(), vec![callback]);
 
         #[cfg(not(target_arch = "wasm32"))]
-        self.worker.load(handle);
+        self.worker.load(handle, true);
     }
 
     #[cfg(feature = "image")]
@@ -307,7 +307,7 @@ impl Cache {
     }
 
     #[cfg(feature = "image")]
-    fn receive(&mut self) {
+    pub fn receive(&mut self) {
         #[cfg(not(target_arch = "wasm32"))]
         while let Ok(work) = self.worker.try_recv() {
             use crate::image::raster::Memory;
@@ -402,7 +402,7 @@ fn load_image<'a>(
                 let _ = pending.insert(handle.id(), Vec::from_iter(callback));
 
                 #[cfg(not(target_arch = "wasm32"))]
-                worker.load(handle);
+                worker.load(handle, false);
             } else {
                 // Synchronous fallback when no callback is provided,
                 // needed for one-shot renders like drag icon screenshots
@@ -467,8 +467,11 @@ mod worker {
             }
         }
 
-        pub fn load(&self, handle: &image::Handle) {
-            let _ = self.jobs.send(Job::Load(handle.clone()));
+        pub fn load(&self, handle: &image::Handle, is_allocation: bool) {
+            let _ = self.jobs.send(Job::Load {
+                handle: handle.clone(),
+                is_allocation,
+            });
         }
 
         pub fn upload(&self, handle: &image::Handle, image: raster::Image) {
@@ -509,7 +512,10 @@ mod worker {
 
     #[derive(Debug)]
     enum Job {
-        Load(image::Handle),
+        Load {
+            handle: image::Handle,
+            is_allocation: bool,
+        },
         Upload {
             handle: image::Handle,
             rgba: Bytes,
@@ -544,14 +550,21 @@ mod worker {
                 };
 
                 match job {
-                    Job::Load(handle) => {
-                        match crate::graphics::image::load(&handle) {
+                    Job::Load {
+                        handle,
+                        is_allocation,
+                    } => {
+                         match crate::graphics::image::load(&handle) {
                             Ok(image) => self.upload(
                                 handle,
                                 image.width(),
                                 image.height(),
                                 image.into_raw(),
-                                Shell::invalidate_layout,
+                                if is_allocation {
+                                    Shell::tick
+                                } else {
+                                    Shell::invalidate_layout
+                                },
                             ),
                             Err(error) => {
                                 let _ = self

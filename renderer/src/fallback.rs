@@ -47,10 +47,6 @@ where
         delegate!(self, renderer, renderer.fill_quad(quad, background.into()));
     }
 
-    fn reset(&mut self, new_bounds: Rectangle) {
-        delegate!(self, renderer, renderer.reset(new_bounds));
-    }
-
     fn start_layer(&mut self, bounds: Rectangle) {
         delegate!(self, renderer, renderer.start_layer(bounds));
     }
@@ -87,6 +83,14 @@ where
 
     fn scale_factor(&self) -> Option<f32> {
         delegate!(self, renderer, renderer.scale_factor())
+    }
+
+    fn tick(&mut self) {
+        delegate!(self, renderer, renderer.tick());
+    }
+
+    fn reset(&mut self, new_bounds: Rectangle) {
+        delegate!(self, renderer, renderer.reset(new_bounds));
     }
 }
 

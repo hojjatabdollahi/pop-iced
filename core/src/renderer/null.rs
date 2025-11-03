@@ -16,8 +16,6 @@ impl Renderer for () {
 
     fn end_transformation(&mut self) {}
 
-    fn reset(&mut self, _new_bounds: Rectangle) {}
-
     fn fill_quad(
         &mut self,
         _quad: renderer::Quad,
@@ -41,6 +39,8 @@ impl Renderer for () {
     fn scale_factor(&self) -> Option<f32> {
         None
     }
+
+    fn reset(&mut self, _new_bounds: Rectangle) {}
 }
 
 impl text::Renderer for () {
