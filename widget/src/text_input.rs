@@ -322,6 +322,7 @@ where
             shaping: text::Shaping::Advanced,
             wrapping: text::Wrapping::default(),
             ellipsize: text::Ellipsize::default(),
+            hint_factor: renderer.scale_factor(),
         };
 
         let _ = state.placeholder.update(placeholder_text);
@@ -348,6 +349,7 @@ where
                 shaping: text::Shaping::Advanced,
                 wrapping: text::Wrapping::default(),
                 ellipsize: text::Ellipsize::default(),
+                hint_factor: renderer.scale_factor(),
             };
 
             let _ = state.icon.update(icon_text);
@@ -537,7 +539,11 @@ where
                                     x: (text_bounds.x + text_value_width)
                                         .floor(),
                                     y: text_bounds.y,
-                                    width: 1.0,
+                                    width: if renderer::CRISP {
+                                        (1.0 / renderer.scale_factor().unwrap_or(1.0)).max(1.0)
+                                    } else {
+                                        1.0
+                                    },
                                     height: text_bounds.height,
                                 },
                                 ..renderer::Quad::default()
@@ -1764,6 +1770,7 @@ fn replace_paragraph<Renderer>(
         shaping: text::Shaping::Advanced,
         wrapping: text::Wrapping::default(),
         ellipsize: text::Ellipsize::default(),
+        hint_factor: renderer.scale_factor(),
     });
 }
 

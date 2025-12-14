@@ -57,6 +57,7 @@ impl Text {
             shaping: self.shaping,
             wrapping: Wrapping::default(),
             ellipsize: core::text::Ellipsize::None,
+            hint_factor: None,
         });
 
         let mut buffer = cosmic_text::BufferLine::new(

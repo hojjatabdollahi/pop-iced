@@ -462,6 +462,7 @@ where
                 shaping: text::Shaping::Advanced,
                 wrapping: text::Wrapping::None,
                 ellipsize: text::Ellipsize::default(),
+                hint_factor: renderer.scale_factor(),
             });
 
             self.spans.clear();

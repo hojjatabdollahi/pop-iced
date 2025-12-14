@@ -28,7 +28,7 @@ wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
 # Enables the `tiny-skia` software renderer
 
 
-default = ["a11y", "tiny-skia", "tokio", "wayland", "x11"]
+default = ["a11y", "tiny-skia", "tokio", "wayland", "x11", "hinting"]
 # Enable the `tiny-skia` software renderer backend
 tiny-skia = ["iced_renderer/tiny-skia"]
 # Enables the `image` widget
@@ -69,8 +69,6 @@ sysinfo = ["iced_winit/sysinfo"]
 # Enables broken "sRGB linear" blending to reproduce color management of the Web
 web-colors = ["iced_renderer/web-colors"]
 # Enables pixel snapping for crisp edges by default (can cause jitter!)
-
-
 # Enables the `widget::selector` module
 crisp = ["iced_core/crisp", "iced_widget/crisp"]
 # Enables the WebGL backend
@@ -93,6 +91,8 @@ advanced = [
 basic-shaping = ["iced_core/basic-shaping"]
 # Enables advanced text shaping by default
 advanced-shaping = ["iced_core/advanced-shaping"]
+# Enables rendering hints (e.g. metrics hinting)
+hinting = ["iced_winit/hinting"]
 # Enables strict assertions for debugging purposes at the expense of performance
 strict-assertions = ["iced_renderer/strict-assertions"]
 # Redraws on every runtime event, and not only when a widget requests it

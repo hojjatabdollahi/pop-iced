@@ -643,7 +643,7 @@ impl Default for Style {
             background: None,
             border: Border::default(),
             shadow: Shadow::default(),
-            snap: cfg!(feature = "crisp"),
+            snap: renderer::CRISP,
         }
     }
 }

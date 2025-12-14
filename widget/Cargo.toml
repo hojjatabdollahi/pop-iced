@@ -27,7 +27,6 @@ wgpu = ["iced_renderer/wgpu-bare"]
 markdown = ["dep:pulldown-cmark"]
 highlighter = ["dep:iced_highlighter"]
 advanced = []
-crisp = []
 a11y = ["iced_accessibility"]
 cctk = ["iced_runtime/cctk", "dep:cctk"]
 

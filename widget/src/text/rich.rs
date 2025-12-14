@@ -509,6 +509,7 @@ where
             shaping: Shaping::Advanced,
             wrapping,
             ellipsize,
+            hint_factor: renderer.scale_factor(),
         };
 
         if state.spans != spans {
@@ -527,6 +528,7 @@ where
                 shaping: Shaping::Advanced,
                 wrapping,
                 ellipsize,
+                hint_factor: renderer.scale_factor(),
             }) {
                 core::text::Difference::None => {}
                 core::text::Difference::Bounds => {

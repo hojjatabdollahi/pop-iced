@@ -348,7 +348,17 @@ where
         layout::next_to_each_other(
             &limits,
             self.spacing,
-            |_| layout::Node::new(crate::core::Size::new(48., 24.)),
+            |_| {
+                let size = if renderer::CRISP {
+                    let scale_factor = renderer.scale_factor().unwrap_or(1.0);
+
+                    (self.size * scale_factor).round() / scale_factor
+                } else {
+                    self.size
+                };
+
+                layout::Node::new(Size::new(2.0 * size, size))
+            },
             |limits| {
                 if let Some(label) = self.label.as_deref() {
                     let state = tree
@@ -488,33 +498,11 @@ where
             );
         }
 
+        let scale_factor = renderer.scale_factor().unwrap_or(1.0);
         let bounds = toggler_layout.bounds();
-        let is_mouse_over = cursor.is_over(layout.bounds());
-
-        let status = if self.on_toggle.is_none() {
-            Status::Disabled {
-                is_toggled: self.is_toggled,
-            }
-        } else if is_mouse_over {
-            Status::Hovered {
-                is_toggled: self.is_toggled,
-            }
-        } else {
-            Status::Active {
-                is_toggled: self.is_toggled,
-            }
-        };
-
-        let style = theme.style(&self.class, status);
-
-        let space = style.handle_margin;
-
-        let toggler_background_bounds = Rectangle {
-            x: bounds.x,
-            y: bounds.y,
-            width: bounds.width,
-            height: bounds.height,
-        };
+        let border_radius = style
+            .border_radius
+            .unwrap_or_else(|| border::Radius::new(bounds.height / 2.0));
 
         renderer.fill_quad(
             renderer::Quad {
@@ -529,22 +517,32 @@ where
             style.background,
         );
 
-        let padding = (style.padding_ratio * bounds.height).round();
-        let toggler_foreground_bounds = Rectangle {
-            x: bounds.x
-                + if self.is_toggled {
-                    bounds.width - space - (bounds.height - (2.0 * space))
-                } else {
-                    space
-                },
-            y: bounds.y + space,
-            width: bounds.height - (2.0 * space),
-            height: bounds.height - (2.0 * space),
+        let toggle_bounds = {
+            // Try to align toggle to the pixel grid
+            let bounds = if renderer::CRISP {
+                (bounds * scale_factor).round()
+            } else {
+                bounds
+            };
+
+            let padding = (style.padding_ratio * bounds.height).round();
+
+            Rectangle {
+                x: bounds.x
+                    + if self.is_toggled {
+                        bounds.width - bounds.height + padding
+                    } else {
+                        padding
+                    },
+                y: bounds.y + padding,
+                width: bounds.height - (2.0 * padding),
+                height: bounds.height - (2.0 * padding),
+            } * (1.0 / scale_factor)
         };
 
         renderer.fill_quad(
             renderer::Quad {
-                bounds: toggler_foreground_bounds,
+                bounds: toggle_bounds,
                 border: Border {
                     radius: style.handle_radius,
                     width: style.foreground_border_width,

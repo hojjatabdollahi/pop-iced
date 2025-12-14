@@ -481,6 +481,7 @@ where
                         shaping: *shaping,
                         wrapping: text::Wrapping::default(),
                         ellipsize: text::Ellipsize::default(),
+                        hint_factor: None,
                     },
                     bounds.center(),
                     style.icon_color,

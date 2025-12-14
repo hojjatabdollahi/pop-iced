@@ -577,6 +577,7 @@ where
                     shaping: self.text_shaping,
                     wrapping: text::Wrapping::default(),
                     ellipsize: text::Ellipsize::default(),
+                    hint_factor: renderer.scale_factor(),
                 },
                 Point::new(bounds.x + self.padding.left, bounds.center_y()),
                 if is_selected {

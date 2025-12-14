@@ -668,6 +668,7 @@ where
             self.text_size.unwrap_or_else(|| renderer.default_size()),
             self.line_height,
             self.wrapping,
+            renderer.scale_factor(),
             state.highlighter.borrow_mut().deref_mut(),
         );
 
@@ -1015,6 +1016,7 @@ where
                         shaping: text::Shaping::Advanced,
                         wrapping: self.wrapping,
                         ellipsize: self.ellipsize,
+                        hint_factor: renderer.scale_factor(),
                     },
                     text_bounds.position(),
                     style.placeholder,
@@ -1039,7 +1041,11 @@ where
                         Rectangle::new(
                             position + translation,
                             Size::new(
-                                1.0,
+                                if renderer::CRISP {
+                                    (1.0 / renderer.scale_factor().unwrap_or(1.0)).max(1.0)
+                                } else {
+                                    1.0
+                                },
                                 self.line_height
                                     .to_absolute(self.text_size.unwrap_or_else(
                                         || renderer.default_size(),

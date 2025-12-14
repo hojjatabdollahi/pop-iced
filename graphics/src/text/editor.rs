@@ -23,6 +23,8 @@ struct Internal {
     font: Font,
     bounds: Size,
     topmost_line_changed: Option<usize>,
+    hint: bool,
+    hint_factor: f32,
     version: text::Version,
 }
 
@@ -161,11 +163,13 @@ impl editor::Editor for Editor {
                         let line_top = run.line_top;
                         run.highlight(start, end)
                             .filter(|(_, width)| *width > 0.0)
-                            .map(move |(x, width)| Rectangle {
-                                x,
-                                width,
-                                y: line_top,
-                                height: line_height,
+                            .map(move |(x, width)| {
+                                Rectangle {
+                                    x,
+                                    width,
+                                    y: line_top,
+                                    height: line_height,
+                                } * (1.0 / internal.hint_factor)
                             })
                             .collect::<Vec<_>>()
                     })
@@ -196,7 +200,10 @@ impl editor::Editor for Editor {
                         )
                     });
 
-                Selection::Caret(point)
+                Selection::Caret(Point::new(
+                    point.x / internal.hint_factor,
+                    point.y / internal.hint_factor,
+                ))
             }
         };
 
@@ -402,8 +409,8 @@ impl editor::Editor for Editor {
                     editor.action(
                         font_system.raw(),
                         cosmic_text::Action::Click {
-                            x: position.x as i32,
-                            y: position.y as i32,
+                            x: (position.x * internal.hint_factor) as i32,
+                            y: (position.y * internal.hint_factor) as i32,
                         },
                     );
                 }
@@ -411,8 +418,8 @@ impl editor::Editor for Editor {
                     editor.action(
                         font_system.raw(),
                         cosmic_text::Action::Drag {
-                            x: position.x as i32,
-                            y: position.y as i32,
+                            x: (position.x * internal.hint_factor) as i32,
+                            y: (position.y * internal.hint_factor) as i32,
                         },
                     );
 
@@ -472,7 +479,13 @@ impl editor::Editor for Editor {
         let (bounds, _has_rtl) =
             text::measure(buffer_from_editor(&internal.editor));
 
-        bounds
+        bounds * (1.0 / internal.hint_factor)
+    }
+
+    fn hint_factor(&self) -> Option<f32> {
+        let internal = self.internal();
+
+        internal.hint.then_some(internal.hint_factor)
     }
 
     fn update(
@@ -482,6 +495,7 @@ impl editor::Editor for Editor {
         new_size: Pixels,
         new_line_height: LineHeight,
         new_wrapping: Wrapping,
+        new_hint_factor: Option<f32>,
         new_highlighter: &mut impl Highlighter,
     ) {
         self.with_internal_mut(|internal| {
@@ -516,15 +530,43 @@ impl editor::Editor for Editor {
 
             let metrics = buffer.metrics();
             let new_line_height = new_line_height.to_absolute(new_size);
+            let mut hinting_changed = false;
+
+            const MAX_HINTING_SIZE: f32 = 18.0;
+
+            let new_hint_factor = if new_hint_factor
+                .is_some_and(|hint_factor| hint_factor * new_size.0 < MAX_HINTING_SIZE)
+            {
+                new_hint_factor
+            } else {
+                None
+            };
+
+            if new_hint_factor != internal.hint.then_some(internal.hint_factor) {
+                internal.hint = new_hint_factor.is_some();
+                internal.hint_factor = new_hint_factor.unwrap_or(1.0);
+
+                buffer.set_hinting(
+                    font_system.raw(),
+                    if internal.hint {
+                        cosmic_text::Hinting::Enabled
+                    } else {
+                        cosmic_text::Hinting::Disabled
+                    },
+                );
+
+                hinting_changed = true;
+            }
 
             if new_size.0 != metrics.font_size
                 || new_line_height.0 != metrics.line_height
+                || hinting_changed
             {
                 log::trace!("Updating `Metrics` of `Editor`...");
 
                 buffer.set_metrics(cosmic_text::Metrics::new(
-                    new_size.0,
-                    new_line_height.0,
+                    new_size.0 * internal.hint_factor,
+                    new_line_height.0 * internal.hint_factor,
                 ));
             }
 
@@ -536,11 +578,13 @@ impl editor::Editor for Editor {
                 buffer.set_wrap(new_wrap);
             }
 
-            if new_bounds != internal.bounds {
+            if new_bounds != internal.bounds || hinting_changed {
                 log::trace!("Updating size of `Editor`...");
 
-                buffer
-                    .set_size(Some(new_bounds.width), Some(new_bounds.height));
+                buffer.set_size(
+                    Some(new_bounds.width * internal.hint_factor),
+                    Some(new_bounds.height * internal.hint_factor),
+                );
 
                 internal.bounds = new_bounds;
             }
@@ -570,7 +614,8 @@ impl editor::Editor for Editor {
         let buffer = buffer_from_editor(&internal.editor);
 
         let scroll = buffer.scroll();
-        let mut window = (internal.bounds.height / buffer.metrics().line_height)
+        let mut window = (internal.bounds.height * internal.hint_factor
+            / buffer.metrics().line_height)
             .ceil() as i32;
 
         let last_visible_line = buffer.lines[scroll.line..]
@@ -669,6 +714,8 @@ impl Default for Internal {
             font: Font::default(),
             bounds: Size::ZERO,
             topmost_line_changed: None,
+            hint: false,
+            hint_factor: 1.0,
             version: text::Version::default(),
         }
     }

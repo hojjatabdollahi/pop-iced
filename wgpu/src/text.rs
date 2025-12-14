@@ -505,8 +505,9 @@ fn prepare(
 
     let text_areas = sections.iter().zip(allocations.iter()).filter_map(
         |(section, allocation)| {
-            let (buffer, position, color, clip_bounds, transformation) =
-                match section {
+            let (buffer, hint_factor, position, color, clip_bounds, transformation) =
+                match section
+                {
                     Text::Paragraph {
                         position,
                         color,
@@ -514,6 +515,8 @@ fn prepare(
                         transformation,
                         ..
                     } => {
+                        use crate::core::text::Paragraph as _;
+
                         let Some(Allocation::Paragraph(paragraph)) = allocation
                         else {
                             return None;
@@ -521,6 +524,7 @@ fn prepare(
 
                         (
                             paragraph.buffer(),
+                            paragraph.hint_factor(),
                             *position,
                             *color,
                             *clip_bounds,
@@ -534,6 +538,8 @@ fn prepare(
                         transformation,
                         ..
                     } => {
+                        use crate::core::text::Editor as _;
+
                         let Some(Allocation::Editor(editor)) = allocation
                         else {
                             return None;
@@ -541,6 +547,7 @@ fn prepare(
 
                         (
                             editor.buffer(),
+                            editor.hint_factor(),
                             *position,
                             *color,
                             *clip_bounds,
@@ -588,6 +595,7 @@ fn prepare(
 
                         (
                             &entry.buffer,
+                            None,
                             position,
                             *color,
                             *clip_bounds,
@@ -604,6 +612,7 @@ fn prepare(
 
                         (
                             buffer.as_ref(),
+                            None,
                             raw.position,
                             raw.color,
                             raw.clip_bounds,
@@ -612,26 +621,44 @@ fn prepare(
                     }
                 };
 
-            let position = position * transformation * layer_transformation;
+                let clip_bounds = layer_bounds.intersection(
+                    &(clip_bounds * transformation * layer_transformation),
+                )?;
 
-            let clip_bounds = layer_bounds.intersection(
-                &(clip_bounds * transformation * layer_transformation),
-            )?;
+                let mut position = position * transformation * layer_transformation;
+                let mut scale = transformation.scale_factor()
+                    * layer_transformation.scale_factor();
 
-            Some(cryoglyph::TextArea {
-                buffer,
-                left: position.x,
-                top: position.y,
-                scale: transformation.scale_factor()
-                    * layer_transformation.scale_factor(),
-                bounds: cryoglyph::TextBounds {
-                    left: clip_bounds.x.round() as i32,
-                    top: clip_bounds.y.round() as i32,
-                    right: (clip_bounds.x + clip_bounds.width).round() as i32,
-                    bottom: (clip_bounds.y + clip_bounds.height).round() as i32,
-                },
-                default_color: to_color(color),
-            })
+                if let Some(hint_factor) = hint_factor {
+                    let font_size = (buffer.metrics().font_size / hint_factor).round() as u32;
+
+                    position.x = position.x.round()
+                        // This is a hack! Empirically and cluelessly derived
+                        // It tries to nudge hinted text to improve rasterization
+                        + if font_size.is_multiple_of(2) {
+                            0.25
+                        } else if font_size.is_multiple_of(5) {
+                            -0.45 // Deliberately avoid 0.5 to circumvent erratic rounding due to floating precision errors
+                        } else {
+                            -0.25
+                        };
+
+                    scale /= hint_factor;
+                }
+
+                Some(cryoglyph::TextArea {
+                    buffer,
+                    left: position.x,
+                    top: position.y,
+                    scale,
+                    bounds: cryoglyph::TextBounds {
+                        left: clip_bounds.x.round() as i32,
+                        top: clip_bounds.y.round() as i32,
+                        right: (clip_bounds.x + clip_bounds.width).round() as i32,
+                        bottom: (clip_bounds.y + clip_bounds.height).round() as i32,
+                    },
+                    default_color: to_color(color),
+                })
         },
     );
 

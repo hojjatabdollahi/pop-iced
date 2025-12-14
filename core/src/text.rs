@@ -47,6 +47,16 @@ pub struct Text<Content = String, Font = crate::Font> {
 
     /// The  [`Ellipsize`] strategy of the [`Text`].
     pub ellipsize: Ellipsize,
+
+    /// The scale factor that may be used to internally scale the layout
+    /// calculation of the [`Paragraph`] and leverage metrics hinting.
+    ///
+    /// Effectively, this defines the "base" layout that will be used for
+    /// linear scaling.
+    ///
+    /// If `None`, hinting will be disabled and subpixel positioning will be
+    /// performed.
+    pub hint_factor: Option<f32>,
 }
 
 impl<Content, Font> Text<Content, Font>
@@ -67,6 +77,7 @@ where
             shaping: self.shaping,
             wrapping: self.wrapping,
             ellipsize: self.ellipsize,
+            hint_factor: self.hint_factor,
         }
     }
 }
