@@ -5820,6 +5820,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sandpiles"
+version = "0.1.0"
+dependencies = [
+ "iced",
+]
+
+[[package]]
 name = "schannel"
 version = "0.1.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
