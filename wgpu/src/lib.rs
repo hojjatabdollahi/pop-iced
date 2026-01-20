@@ -128,6 +128,7 @@ impl Renderer {
             // It would be great if the `StagingBelt` API exposed methods
             // for introspection to detect when a resize may be worth it.
             staging_belt: wgpu::util::StagingBelt::new(
+                engine.device.clone(),
                 buffer::MAX_WRITE_SIZE as u64,
             ),
 
@@ -456,6 +457,7 @@ impl Renderer {
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             },
         ));
 
@@ -530,105 +532,107 @@ impl Renderer {
                         depth_stencil_attachment: None,
                         timestamp_writes: None,
                         occlusion_query_set: None,
+                        multiview_mask: None,
                     },
                 ));
             }
 
             if !layer.primitives.is_empty() {
-                let render_span = debug::render(debug::Primitive::Shader);
+            let render_span = debug::render(debug::Primitive::Shader);
 
-                let primitive_storage = self
-                    .engine
-                    .primitive_storage
-                    .read()
-                    .expect("Read primitive storage");
+            let primitive_storage = self
+                .engine
+                .primitive_storage
+                .read()
+                .expect("Read primitive storage");
 
-                let mut need_render = Vec::new();
+            let mut need_render = Vec::new();
 
-                for instance in &layer.primitives {
-                    let bounds = instance.bounds * scale;
+            for instance in &layer.primitives {
+                let bounds = instance.bounds * scale;
 
-                    if let Some(clip_bounds) = (instance.bounds * scale)
-                        .intersection(&physical_bounds)
-                        .and_then(Rectangle::snap)
-                    {
-                        render_pass.set_viewport(
-                            bounds.x,
-                            bounds.y,
-                            bounds.width,
-                            bounds.height,
-                            0.0,
-                            1.0,
-                        );
+                if let Some(clip_bounds) = (instance.bounds * scale)
+                    .intersection(&physical_bounds)
+                    .and_then(Rectangle::snap)
+                {
+                    render_pass.set_viewport(
+                        bounds.x,
+                        bounds.y,
+                        bounds.width,
+                        bounds.height,
+                        0.0,
+                        1.0,
+                    );
 
-                        render_pass.set_scissor_rect(
-                            clip_bounds.x,
-                            clip_bounds.y,
-                            clip_bounds.width,
-                            clip_bounds.height,
-                        );
+                    render_pass.set_scissor_rect(
+                        clip_bounds.x,
+                        clip_bounds.y,
+                        clip_bounds.width,
+                        clip_bounds.height,
+                    );
 
-                        let drawn = instance
-                            .primitive
-                            .draw(&primitive_storage, &mut render_pass);
+                    let drawn = instance
+                        .primitive
+                        .draw(&primitive_storage, &mut render_pass);
 
-                        if !drawn {
-                            need_render.push((instance, clip_bounds));
-                        }
+                    if !drawn {
+                        need_render.push((instance, clip_bounds));
                     }
                 }
-
-                render_pass.set_viewport(
-                    0.0,
-                    0.0,
-                    viewport.physical_width() as f32,
-                    viewport.physical_height() as f32,
-                    0.0,
-                    1.0,
-                );
-
-                render_pass.set_scissor_rect(
-                    0,
-                    0,
-                    viewport.physical_width(),
-                    viewport.physical_height(),
-                );
-
-                if !need_render.is_empty() {
-                    let _ = ManuallyDrop::into_inner(render_pass);
-
-                    for (instance, clip_bounds) in need_render {
-                        instance.primitive.render(
-                            &primitive_storage,
-                            encoder,
-                            frame,
-                            &clip_bounds,
-                        );
-                    }
-
-                    render_pass = ManuallyDrop::new(encoder.begin_render_pass(
-                        &wgpu::RenderPassDescriptor {
-                            label: Some("iced_wgpu render pass"),
-                            color_attachments: &[Some(
-                                wgpu::RenderPassColorAttachment {
-                                    view: frame,
-                                    depth_slice: None,
-                                    resolve_target: None,
-                                    ops: wgpu::Operations {
-                                        load: wgpu::LoadOp::Load,
-                                        store: wgpu::StoreOp::Store,
-                                    },
-                                },
-                            )],
-                            depth_stencil_attachment: None,
-                            timestamp_writes: None,
-                            occlusion_query_set: None,
-                        },
-                    ));
-                }
-
-                render_span.finish();
             }
+
+            render_pass.set_viewport(
+                0.0,
+                0.0,
+                viewport.physical_width() as f32,
+                viewport.physical_height() as f32,
+                0.0,
+                1.0,
+            );
+
+            render_pass.set_scissor_rect(
+                0,
+                0,
+                viewport.physical_width(),
+                viewport.physical_height(),
+            );
+
+            if !need_render.is_empty() {
+                let _ = ManuallyDrop::into_inner(render_pass);
+
+                for (instance, clip_bounds) in need_render {
+                    instance.primitive.render(
+                        &primitive_storage,
+                        encoder,
+                        frame,
+                        &clip_bounds,
+                    );
+                }
+
+                render_pass = ManuallyDrop::new(encoder.begin_render_pass(
+                    &wgpu::RenderPassDescriptor {
+                        label: Some("iced_wgpu render pass"),
+                        color_attachments: &[Some(
+                            wgpu::RenderPassColorAttachment {
+                                view: frame,
+                                depth_slice: None,
+                                resolve_target: None,
+                                ops: wgpu::Operations {
+                                    load: wgpu::LoadOp::Load,
+                                    store: wgpu::StoreOp::Store,
+                                },
+                            },
+                        )],
+                        depth_stencil_attachment: None,
+                        timestamp_writes: None,
+                        occlusion_query_set: None,
+                        multiview_mask: None,
+                    },
+                ));
+            }
+
+            render_span.finish();
+        }
 
             #[cfg(any(feature = "svg", feature = "image"))]
             if !layer.images.is_empty() {

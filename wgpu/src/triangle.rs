@@ -313,6 +313,7 @@ fn render<'a>(
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
+                multiview_mask: None,
             })
         };
 
@@ -426,7 +427,6 @@ impl Layer {
             let indices = mesh.indices();
 
             index_offset += self.index_buffer.write(
-                device,
                 encoder,
                 belt,
                 index_offset,
@@ -436,24 +436,19 @@ impl Layer {
             match mesh {
                 Mesh::Solid { buffers, .. } => {
                     solid_vertex_offset += self.solid.vertices.write(
-                        device,
                         encoder,
                         belt,
                         solid_vertex_offset,
                         &buffers.vertices,
                     );
 
-                    solid_uniform_offset += self.solid.uniforms.write(
-                        device,
-                        encoder,
-                        belt,
-                        solid_uniform_offset,
-                        &[uniforms],
-                    );
+                    solid_uniform_offset +=
+                        self.solid
+                            .uniforms
+                            .write(encoder, belt, solid_uniform_offset, &[uniforms]);
                 }
                 Mesh::Gradient { buffers, .. } => {
                     gradient_vertex_offset += self.gradient.vertices.write(
-                        device,
                         encoder,
                         belt,
                         gradient_vertex_offset,
@@ -461,7 +456,6 @@ impl Layer {
                     );
 
                     gradient_uniform_offset += self.gradient.uniforms.write(
-                        device,
                         encoder,
                         belt,
                         gradient_uniform_offset,
@@ -731,7 +725,7 @@ mod solid {
                 &wgpu::PipelineLayoutDescriptor {
                     label: Some("iced_wgpu.triangle.solid.pipeline_layout"),
                     bind_group_layouts: &[&constants_layout],
-                    push_constant_ranges: &[],
+                    immediate_size: 0,
                 },
             );
 
@@ -784,7 +778,7 @@ mod solid {
                         primitive: triangle::primitive_state(),
                         depth_stencil: None,
                         multisample: triangle::multisample_state(antialiasing),
-                        multiview: None,
+                        multiview_mask: None,
                         cache: None,
                     },
                 );
@@ -886,7 +880,7 @@ mod gradient {
                 &wgpu::PipelineLayoutDescriptor {
                     label: Some("iced_wgpu.triangle.gradient.pipeline_layout"),
                     bind_group_layouts: &[&constants_layout],
-                    push_constant_ranges: &[],
+                    immediate_size: 0,
                 },
             );
 
@@ -949,7 +943,7 @@ mod gradient {
                     primitive: triangle::primitive_state(),
                     depth_stencil: None,
                     multisample: triangle::multisample_state(antialiasing),
-                    multiview: None,
+                    multiview_mask: None,
                     cache: None,
                 },
             );

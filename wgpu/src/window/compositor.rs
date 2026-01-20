@@ -122,15 +122,16 @@ impl Compositor {
             std::env::remove_var("VK_LOADER_DRIVERS_DISABLE");
         }
 
-        // #[cfg(not(target_arch = "wasm32"))]
-        // if log::max_level() >= log::LevelFilter::Info {
-        //     let available_adapters: Vec<_> = instance
-        //         .enumerate_adapters(settings.backends)
-        //         .iter()
-        //         .map(wgpu::Adapter::get_info)
-        //         .collect();
-        //     log::info!("Available adapters: {available_adapters:#?}");
-        // }
+        #[cfg(not(target_arch = "wasm32"))]
+        if log::max_level() >= log::LevelFilter::Info {
+            let available_adapters: Vec<_> = instance
+                .enumerate_adapters(settings.backends)
+                .await
+                .iter()
+                .map(wgpu::Adapter::get_info)
+                .collect();
+            log::info!("Available adapters: {available_adapters:#?}");
+        }
 
         #[allow(unsafe_code)]
         let mut compatible_surface = compatible_window
