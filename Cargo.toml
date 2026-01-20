@@ -241,7 +241,7 @@ bytes = "1.6"
 cosmic-text = { git = "https://github.com/pop-os/cosmic-text.git" }
 # cosmic-text = "0.10"
 dark-light = "1.0"
-cryoglyph = { package = "cryoglyph", git = "https://github.com/pop-os/glyphon.git", tag = "cosmic-0.14" }
+cryoglyph = { path = "../../glyphon" }
 resvg = "0.45"
 web-sys = "0.3.69"
 guillotiere = "0.6"
