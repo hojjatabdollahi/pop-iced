@@ -837,20 +837,15 @@ fn rounded_box_sdf(
 pub fn adjust_clip_mask(clip_mask: &mut tiny_skia::Mask, bounds: Rectangle) {
     clip_mask.clear();
 
-    let path = {
-        let mut builder = tiny_skia::PathBuilder::new();
-        builder.push_rect(
-            tiny_skia::Rect::from_xywh(
-                bounds.x,
-                bounds.y,
-                bounds.width,
-                bounds.height,
-            )
-            .unwrap(),
-        );
-
-        builder.finish().unwrap()
-    };
+    let path = tiny_skia::PathBuilder::from_rect(
+        tiny_skia::Rect::from_xywh(
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height,
+        )
+        .expect("Create clip rectangle"),
+    );
 
     clip_mask.fill_path(
         &path,
