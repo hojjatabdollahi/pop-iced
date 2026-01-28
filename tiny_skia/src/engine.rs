@@ -391,28 +391,14 @@ impl Engine {
                     return;
                 };
 
-                let physical_bounds =
-                    Rectangle::new(*position, editor.bounds) * transformation;
-
-                if !clip_bounds.intersects(&physical_bounds) {
-                    return;
-                }
-
-                let clip_mask =
-                    match physical_bounds.is_within_strict(&clip_bounds) {
-                        true => None,
-                        false => {
-                            adjust_clip_mask(clip_mask, clip_bounds);
-                            Some(clip_mask as &_)
-                        }
-                    };
+                adjust_clip_mask(clip_mask, clip_bounds);
 
                 self.text_pipeline.draw_editor(
                     editor,
                     *position,
                     *color,
                     pixels,
-                    clip_mask,
+                    Some(clip_mask),
                     transformation,
                 );
             }
