@@ -254,17 +254,14 @@ impl Compositor {
 
                 log::info!("Available alpha modes: {alpha_modes:#?}");
 
-                let preferred_alpha = if alpha_modes
-                    .contains(&wgpu::CompositeAlphaMode::PostMultiplied)
-                {
-                    wgpu::CompositeAlphaMode::PostMultiplied
-                } else if alpha_modes
-                    .contains(&wgpu::CompositeAlphaMode::PreMultiplied)
-                {
-                    wgpu::CompositeAlphaMode::PreMultiplied
-                } else {
-                    wgpu::CompositeAlphaMode::Auto
-                };
+                let preferred_alpha =
+                    if alpha_modes
+                        .contains(&wgpu::CompositeAlphaMode::PreMultiplied)
+                    {
+                        wgpu::CompositeAlphaMode::PreMultiplied
+                    } else {
+                        wgpu::CompositeAlphaMode::Auto
+                    };
 
                 format.zip(Some(preferred_alpha))
             })

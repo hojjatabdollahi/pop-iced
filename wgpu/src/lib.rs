@@ -443,9 +443,9 @@ impl Renderer {
                                         .components();
 
                                 wgpu::Color {
-                                    r: f64::from(r),
-                                    g: f64::from(g),
-                                    b: f64::from(b),
+                                    r: f64::from(r * a),
+                                    g: f64::from(g * a),
+                                    b: f64::from(b * a),
                                     a: f64::from(a),
                                 }
                             }),
