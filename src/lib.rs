@@ -645,7 +645,7 @@ pub mod overlay {
     pub type Element<
         'a,
         Message,
-        Theme = crate::Renderer,
+        Theme = crate::Theme,
         Renderer = crate::Renderer,
     > = crate::core::overlay::Element<'a, Message, Theme, Renderer>;
 
