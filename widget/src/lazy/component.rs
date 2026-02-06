@@ -7,7 +7,7 @@ use crate::core::renderer;
 use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    self, Clipboard, Element, Length, Rectangle, Shell, Size, Vector, Widget,
+    self, Element, Length, Rectangle, Shell, Size, Vector, Widget,
 };
 
 use iced_renderer::core::widget::Operation;
@@ -323,7 +323,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -338,7 +337,6 @@ where
                 layout,
                 cursor,
                 renderer,
-                clipboard,
                 &mut local_shell,
                 viewport,
             );
@@ -351,6 +349,7 @@ where
         local_shell.revalidate_layout(|| shell.invalidate_layout());
         shell.request_redraw_at(local_shell.redraw_request());
         shell.request_input_method(local_shell.input_method());
+        shell.clipboard_mut().merge(local_shell.clipboard_mut());
 
         if !local_messages.is_empty() {
             let mut heads = self.state.take().unwrap().into_heads();
@@ -649,7 +648,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         let mut local_messages = Vec::new();
@@ -661,7 +659,6 @@ where
                 layout,
                 cursor,
                 renderer,
-                clipboard,
                 &mut local_shell,
             );
         });
@@ -673,6 +670,7 @@ where
         local_shell.revalidate_layout(|| shell.invalidate_layout());
         shell.request_redraw_at(local_shell.redraw_request());
         shell.request_input_method(local_shell.input_method());
+        shell.clipboard_mut().merge(local_shell.clipboard_mut());
 
         if !local_messages.is_empty() {
             let mut inner =

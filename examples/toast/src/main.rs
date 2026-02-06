@@ -169,7 +169,7 @@ mod toast {
     use iced::advanced::widget::{
         self, Operation, OperationOutputWrapper, Tree,
     };
-    use iced::advanced::{Clipboard, Shell, Widget};
+    use iced::advanced::{Shell, Widget};
     use iced::mouse;
     use iced::time::{self, Duration, Instant};
     use iced::widget::{button, column, container, row, rule, space, text};
@@ -374,7 +374,6 @@ mod toast {
             layout: Layout<'_>,
             cursor: mouse::Cursor,
             renderer: &Renderer,
-            clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
         ) {
@@ -384,7 +383,6 @@ mod toast {
                 layout,
                 cursor,
                 renderer,
-                clipboard,
                 shell,
                 viewport,
             );
@@ -508,7 +506,6 @@ mod toast {
             layout: Layout<'_>,
             cursor: mouse::Cursor,
             renderer: &Renderer,
-            clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
         ) {
             if let Event::Window(window::Event::RedrawRequested(now)) = &event {
@@ -547,7 +544,6 @@ mod toast {
                     layout,
                     cursor,
                     renderer,
-                    clipboard,
                     &mut local_shell,
                     &viewport,
                 );

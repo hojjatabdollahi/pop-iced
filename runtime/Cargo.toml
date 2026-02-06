@@ -18,6 +18,7 @@ debug = []
 selector = ["dep:iced_selector"]
 a11y = ["iced_accessibility", "iced_core/a11y"]
 cctk = ["iced_core/cctk", "dep:cctk"]
+image = ["iced_core/image"]
 
 [dependencies]
 bytes.workspace = true

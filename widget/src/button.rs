@@ -34,8 +34,9 @@ use crate::core::widget::Operation;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Clipboard, Color, Element, Event, Layout, Length, Padding,
-    Rectangle, Shadow, Shell, Size, Theme, Vector, Widget,
+    Background, Color, Element, Event, Layout, Length, Padding,
+    Rectangle, Shadow, Shell, Size,
+    Theme, Vector, Widget,
 };
 
 use iced_renderer::core::widget::operation;
@@ -349,7 +350,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -363,7 +363,6 @@ where
                 .with_virtual_offset(layout.virtual_offset()),
             cursor,
             renderer,
-            clipboard,
             shell,
             viewport,
         );

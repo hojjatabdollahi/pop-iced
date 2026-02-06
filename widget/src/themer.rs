@@ -9,7 +9,7 @@ use crate::core::theme;
 use crate::core::widget::Operation;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    Background, Clipboard, Color, Element, Event, Layout, Length, Rectangle,
+    Background, Color, Element, Event, Layout, Length, Rectangle,
     Shell, Size, Vector, Widget,
 };
 
@@ -113,13 +113,12 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.content.as_widget_mut().update(
-            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
-        );
+        self.content
+            .as_widget_mut()
+            .update(tree, event, layout, cursor, renderer, shell, viewport);
     }
 
     fn mouse_interaction(
@@ -225,12 +224,11 @@ where
                 layout: Layout<'_>,
                 cursor: mouse::Cursor,
                 renderer: &Renderer,
-                clipboard: &mut dyn Clipboard,
                 shell: &mut Shell<'_, Message>,
             ) {
                 self.content
                     .as_overlay_mut()
-                    .update(event, layout, cursor, renderer, clipboard, shell);
+                    .update(event, layout, cursor, renderer, shell);
             }
 
             fn operate(

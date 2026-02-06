@@ -1,6 +1,5 @@
 //! Run a simulation of your application without side effects.
 use crate::core;
-use crate::core::clipboard;
 use crate::core::event;
 use crate::core::keyboard;
 use crate::core::mouse;
@@ -184,13 +183,9 @@ where
     ) -> Vec<event::Status> {
         let events: Vec<Event> = events.into_iter().collect();
 
-        let (_state, statuses) = self.raw.update(
-            &events,
-            self.cursor,
-            &mut self.renderer,
-            &mut clipboard::Null,
-            &mut self.messages,
-        );
+        let (_state, statuses) =
+            self.raw
+                .update(&events, self.cursor, &mut self.renderer, &mut self.messages);
 
         statuses
     }
@@ -205,7 +200,6 @@ where
             ))],
             self.cursor,
             &mut self.renderer,
-            &mut clipboard::Null,
             &mut self.messages,
         );
 

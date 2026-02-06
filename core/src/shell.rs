@@ -1,6 +1,7 @@
-use crate::InputMethod;
+use crate::clipboard;
 use crate::event;
 use crate::window;
+use crate::{Clipboard, InputMethod};
 
 /// A connection to the state of a shell.
 ///
@@ -16,6 +17,7 @@ pub struct Shell<'a, Message> {
     input_method: InputMethod,
     is_layout_invalid: bool,
     are_widgets_invalid: bool,
+    clipboard: Clipboard,
 }
 
 impl<'a, Message> Shell<'a, Message> {
@@ -28,6 +30,10 @@ impl<'a, Message> Shell<'a, Message> {
             is_layout_invalid: false,
             are_widgets_invalid: false,
             input_method: InputMethod::Disabled,
+            clipboard: Clipboard {
+                reads: Vec::new(),
+                write: None,
+            },
         }
     }
 
@@ -91,6 +97,25 @@ impl<'a, Message> Shell<'a, Message> {
         redraw_request: window::RedrawRequest,
     ) {
         shell.redraw_request = redraw_request;
+    }
+
+    /// Requests the runtime to read the clipboard contents expecting the given [`clipboard::Kind`].
+    ///
+    /// The runtime will produce a [`clipboard::Event::Read`] when the contents have been read.
+    pub fn read_clipboard(&mut self, kind: clipboard::Kind) {
+        self.clipboard.reads.push(kind);
+    }
+
+    /// Requests the runtime to write the given [`clipboard::Content`] to the clipboard.
+    ///
+    /// The runtime will produce a [`clipboard::Event::Written`] when the contents have been written.
+    pub fn write_clipboard(&mut self, content: clipboard::Content) {
+        self.clipboard.write = Some(content);
+    }
+
+    /// Returns the [`Clipboard`] requests of the [`Shell`], mutably.
+    pub fn clipboard_mut(&mut self) -> &mut Clipboard {
+        &mut self.clipboard
     }
 
     /// Requests the current [`InputMethod`] strategy.
@@ -157,7 +182,7 @@ impl<'a, Message> Shell<'a, Message> {
     /// function to the messages of the latter.
     ///
     /// This method is useful for composition.
-    pub fn merge<B>(&mut self, other: Shell<'_, B>, f: impl Fn(B) -> Message) {
+    pub fn merge<B>(&mut self, mut other: Shell<'_, B>, f: impl Fn(B) -> Message) {
         self.messages.extend(other.messages.drain(..).map(f));
 
         self.is_layout_invalid =
@@ -168,6 +193,8 @@ impl<'a, Message> Shell<'a, Message> {
 
         self.redraw_request = self.redraw_request.min(other.redraw_request);
         self.event_status = self.event_status.merge(other.event_status);
+
         self.input_method.merge(&other.input_method);
+        self.clipboard.merge(&mut other.clipboard);
     }
 }

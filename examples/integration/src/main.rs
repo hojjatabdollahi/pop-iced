@@ -8,7 +8,6 @@ use iced_wgpu::core::window::Id;
 use iced_wgpu::graphics::Viewport;
 use iced_wgpu::graphics::{Shell, Viewport};
 use iced_wgpu::{Engine, Renderer, wgpu};
-use iced_winit::Clipboard;
 use iced_winit::conversion;
 use iced_winit::core::mouse;
 use iced_winit::core::renderer;
@@ -48,7 +47,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
             events: Vec<Event>,
             cursor: mouse::Cursor,
             cache: user_interface::Cache,
-            clipboard: Clipboard,
             viewport: Viewport,
             modifiers: ModifiersState,
             resized: bool,
@@ -74,7 +72,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
                     Size::new(physical_size.width, physical_size.height),
                     window.scale_factor() as f32,
                 );
-                let clipboard = Clipboard::connect(window.clone());
 
                 let backend = wgpu::Backends::from_env().unwrap_or_default();
 
@@ -179,7 +176,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
                     cursor: mouse::Cursor::Unavailable,
                     modifiers: ModifiersState::default(),
                     cache: user_interface::Cache::new(),
-                    clipboard,
                     viewport,
                     resized: false,
                 };
@@ -205,7 +201,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
                 viewport,
                 cursor,
                 modifiers,
-                clipboard,
                 cache,
                 resized,
             } = self
@@ -281,7 +276,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
                                 )],
                                 *cursor,
                                 renderer,
-                                clipboard,
                                 &mut Vec::new(),
                             );
 
@@ -381,7 +375,6 @@ pub fn main() -> Result<(), winit::error::EventLoopError> {
                     events,
                     *cursor,
                     renderer,
-                    clipboard,
                     &mut messages,
                 );
 

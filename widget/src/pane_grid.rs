@@ -87,8 +87,9 @@ use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    self, Background, Border, Clipboard, Color, Element, Event, Layout, Length,
-    Pixels, Point, Rectangle, Shell, Size, Theme, Vector, Widget,
+    self, Background, Border, Color, Element, Event, Layout, Length,
+    Pixels, Point, Rectangle,
+    Shell, Size, Theme, Vector, Widget,
 };
 use log::trace;
 
@@ -499,7 +500,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -530,7 +530,7 @@ where
             let is_picked = picked_pane == Some(pane);
 
             content.update(
-                tree, event, layout, cursor, renderer, clipboard, shell,
+                tree, event, layout, cursor, renderer, shell,
                 viewport, is_picked,
             );
         }

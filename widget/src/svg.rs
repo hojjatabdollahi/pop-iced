@@ -25,8 +25,9 @@ use crate::core::svg;
 use crate::core::widget::Tree;
 use crate::core::window;
 use crate::core::{
-    Clipboard, Color, ContentFit, Element, Event, Layout, Length, Point,
-    Rectangle, Rotation, Shell, Size, Theme, Vector, Widget,
+    Color, ContentFit, Element, Event, Layout, Length, Point,
+    Rectangle, Rotation, Shell, Size,
+    Theme, Vector, Widget,
 };
 
 #[cfg(feature = "a11y")]
@@ -268,7 +269,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

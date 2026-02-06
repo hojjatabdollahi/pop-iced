@@ -6,7 +6,7 @@ use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::{Operation, Tree};
 use crate::core::{
-    Clipboard, Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size,
+    Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size,
     Vector, Widget,
 };
 
@@ -269,7 +269,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -279,16 +278,15 @@ where
             .zip(&mut tree.children)
             .zip(layout.children())
         {
-            child.as_widget_mut().update(
-                tree,
+            child
+                .as_widget_mut()
+                .update(tree,
                 event,
                 c_layout.with_virtual_offset(layout.virtual_offset()),
                 cursor,
                 renderer,
-                clipboard,
                 shell,
-                viewport,
-            );
+                viewport);
         }
     }
 
@@ -621,13 +619,11 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.row.update(
-            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
-        );
+        self.row
+            .update(tree, event, layout, cursor, renderer, shell, viewport);
     }
 
     fn mouse_interaction(

@@ -8,7 +8,7 @@ use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    self, Clipboard, Element, Event, Layout, Length, Pixels, Rectangle, Shell,
+    self, Element, Event, Layout, Length, Pixels, Rectangle, Shell,
     Size, Vector, Widget,
 };
 
@@ -191,7 +191,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -268,7 +267,6 @@ where
             layout,
             cursor,
             renderer,
-            clipboard,
             shell,
             viewport,
         );

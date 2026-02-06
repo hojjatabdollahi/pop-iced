@@ -1,4 +1,5 @@
 //! Handle events of a user interface.
+use crate::clipboard;
 use crate::input_method;
 use dnd::DndEvent;
 use dnd::DndSurface;
@@ -44,6 +45,10 @@ pub enum Event {
 
     /// Platform specific events
     PlatformSpecific(PlatformSpecific),
+
+    /// A clipboard event
+    Clipboard(clipboard::Event),
+
 }
 
 /// A platform specific event

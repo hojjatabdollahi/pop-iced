@@ -45,8 +45,9 @@ use crate::core::text;
 use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    Background, Border, Clipboard, Color, Element, Event, Layout, Length,
-    Pixels, Rectangle, Shell, Size, Theme, Widget, id,
+    Background, Border, Color, Element, Event, Layout, Length,
+    Pixels, Rectangle, Shell, Size,
+    Theme, Widget, id,
 };
 use crate::core::{
     widget::{self, Id},
@@ -397,7 +398,6 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
