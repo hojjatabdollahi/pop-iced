@@ -87,7 +87,8 @@ impl Layout {
             checkbox(self.explain)
                 .label("Explain")
                 .on_toggle(Message::ExplainToggled),
-            pick_list(Theme::ALL, self.theme.as_ref(), Message::ThemeSelected)
+            pick_list(self.theme.as_ref(), Theme::ALL, Theme::to_string)
+                .on_select(Message::ThemeSelected)
                 .placeholder("Theme"),
         ]
         .spacing(20)

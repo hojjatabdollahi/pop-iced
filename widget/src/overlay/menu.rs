@@ -34,6 +34,7 @@ pub struct Menu<
     state: &'a mut State,
     options: &'a [T],
     hovered_option: &'a mut Option<usize>,
+    to_string: &'a dyn Fn(&T) -> String,
     on_selected: Box<dyn FnMut(T) -> Message + 'a>,
     on_option_hovered: Option<&'a dyn Fn(T) -> Message>,
     width: f32,
@@ -49,7 +50,7 @@ pub struct Menu<
 impl<'a, 'b, T, Message, Theme, Renderer>
     Menu<'a, 'b, T, Message, Theme, Renderer>
 where
-    T: ToString + Clone,
+    T: Clone,
     Message: 'a,
     Theme: Catalog + 'a,
     Renderer: text::Renderer + 'a,
@@ -61,6 +62,7 @@ where
         state: &'a mut State,
         options: &'a [T],
         hovered_option: &'a mut Option<usize>,
+        to_string: &'a dyn Fn(&T) -> String,
         on_selected: impl FnMut(T) -> Message + 'a,
         on_option_hovered: Option<&'a dyn Fn(T) -> Message>,
         class: &'a <Theme as Catalog>::Class<'b>,
@@ -69,6 +71,7 @@ where
             state,
             options,
             hovered_option,
+            to_string,
             on_selected: Box::new(on_selected),
             on_option_hovered,
             width: 0.0,
@@ -200,12 +203,13 @@ where
         menu_height: Length,
     ) -> Self
     where
-        T: Clone + ToString,
+        T: Clone,
     {
         let Menu {
             state,
             options,
             hovered_option,
+            to_string,
             on_selected,
             on_option_hovered,
             width,
@@ -221,6 +225,7 @@ where
         let mut list = Scrollable::new(List {
             options,
             hovered_option,
+            to_string,
             on_selected,
             on_option_hovered,
             font,
@@ -348,6 +353,7 @@ where
 {
     options: &'a [T],
     hovered_option: &'a mut Option<usize>,
+    to_string: &'a dyn Fn(&T) -> String,
     on_selected: Box<dyn FnMut(T) -> Message + 'a>,
     on_option_hovered: Option<&'a dyn Fn(T) -> Message>,
     padding: Padding,
@@ -366,7 +372,7 @@ struct ListState {
 impl<T, Message, Theme, Renderer> Widget<Message, Theme, Renderer>
     for List<'_, '_, T, Message, Theme, Renderer>
 where
-    T: Clone + ToString,
+    T: Clone,
     Theme: Catalog,
     Renderer: text::Renderer,
 {
@@ -569,7 +575,7 @@ where
 
             renderer.fill_text(
                 Text {
-                    content: option.to_string(),
+                    content: (self.to_string)(option),
                     bounds: Size::new(f32::INFINITY, bounds.height),
                     size: text_size,
                     line_height: self.text_line_height,
@@ -597,7 +603,7 @@ impl<'a, 'b, T, Message, Theme, Renderer>
     From<List<'a, 'b, T, Message, Theme, Renderer>>
     for Element<'a, Message, Theme, Renderer>
 where
-    T: ToString + Clone,
+    T: Clone,
     Message: 'a,
     Theme: 'a + Catalog,
     Renderer: 'a + text::Renderer,

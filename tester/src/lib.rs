@@ -703,10 +703,11 @@ impl<P: Program + 'static> Tester<P> {
         .width(Fill);
 
         let mode = pick_list(
-            emulator::Mode::ALL,
             Some(self.mode),
-            Event::ModeSelected,
+            emulator::Mode::ALL,
+            emulator::Mode::to_string,
         )
+        .on_select(Event::ModeSelected)
         .text_size(14)
         .width(Fill);
 

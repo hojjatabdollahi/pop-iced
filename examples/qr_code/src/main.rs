@@ -78,7 +78,8 @@ impl QRGenerator {
 
         let choose_theme = row![
             text("Theme:"),
-            pick_list(Theme::ALL, self.theme.as_ref(), Message::ThemeChanged)
+            pick_list(self.theme.as_ref(), Theme::ALL, Theme::to_string)
+                .on_select(Message::ThemeChanged)
                 .placeholder("Theme")
         ]
         .spacing(10)
