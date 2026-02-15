@@ -143,11 +143,11 @@ pub struct ComboBox<
     text_input: TextInput<'a, TextInputEvent, Theme, Renderer>,
     font: Option<Renderer::Font>,
     selection: text_input::Value,
-    on_selected: Box<dyn Fn(T) -> Message>,
-    on_option_hovered: Option<Box<dyn Fn(T) -> Message>>,
+    on_selected: Box<dyn Fn(T) -> Message + 'a>,
+    on_option_hovered: Option<Box<dyn Fn(T) -> Message + 'a>>,
     on_open: Option<Message>,
     on_close: Option<Message>,
-    on_input: Option<Box<dyn Fn(String) -> Message>>,
+    on_input: Option<Box<dyn Fn(String) -> Message + 'a>>,
     padding: Padding,
     size: Option<f32>,
     text_shaping: text::Shaping,
@@ -168,7 +168,7 @@ where
         state: &'a State<T>,
         placeholder: &str,
         selection: Option<&T>,
-        on_selected: impl Fn(T) -> Message + 'static,
+        on_selected: impl Fn(T) -> Message + 'a,
     ) -> Self {
         let text_input = TextInput::new(placeholder, &state.value())
             .on_input(TextInputEvent::TextChanged)
@@ -198,7 +198,7 @@ where
     /// the [`TextInput`] of the [`ComboBox`].
     pub fn on_input(
         mut self,
-        on_input: impl Fn(String) -> Message + 'static,
+        on_input: impl Fn(String) -> Message + 'a,
     ) -> Self {
         self.on_input = Some(Box::new(on_input));
         self
@@ -208,7 +208,7 @@ where
     /// [`ComboBox`] is hovered using the arrow keys.
     pub fn on_option_hovered(
         mut self,
-        on_option_hovered: impl Fn(T) -> Message + 'static,
+        on_option_hovered: impl Fn(T) -> Message + 'a,
     ) -> Self {
         self.on_option_hovered = Some(Box::new(on_option_hovered));
         self
