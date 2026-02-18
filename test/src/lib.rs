@@ -196,6 +196,7 @@ pub fn run<P: program::Program + 'static>(
             preset,
         );
 
+        let mut history = Vec::with_capacity(ice.instructions.len());
         let mut instructions = ice.instructions.into_iter();
 
         loop {
@@ -232,6 +233,23 @@ pub fn run<P: program::Program + 'static>(
                     writer.write_image_data(&screenshot.rgba)?;
                     writer.finish()?;
 
+                    let reproduction = Ice {
+                        viewport: ice.viewport,
+                        mode: ice.mode,
+                        preset: ice.preset,
+                        instructions: history,
+                    };
+
+                    fs::write(
+                        errors_dir.join(
+                            file.path()
+                                .with_extension("ice")
+                                .file_name()
+                                .expect("Test must have a filename"),
+                        ),
+                        reproduction.to_string(),
+                    )?;
+
                     return Err(Error::IceTestingFailed {
                         file: file.path().to_path_buf(),
                         instruction,
@@ -242,7 +260,8 @@ pub fn run<P: program::Program + 'static>(
                         break;
                     };
 
-                    emulator.run(&program, instruction);
+                    emulator.run(&program, instruction.clone());
+                    history.push(instruction);
                 }
             }
         }
