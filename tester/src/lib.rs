@@ -467,8 +467,7 @@ impl<P: Program + 'static> Tester<P> {
                             *current += 1;
 
                             if let Some(instruction) =
-                                self.instructions.get(*current - 1).cloned()
-                            {
+                            self.instructions.get(*current - 1) {
                                 emulator.run(program, instruction);
                             }
 
