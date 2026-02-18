@@ -133,6 +133,7 @@ impl Ice {
                 Instruction::parse(line).map_err(|error| {
                     ParseError::InvalidInstruction {
                         line: metadata.lines().count() + 1 + i,
+                        instruction: line.to_owned(),
                         error,
                     }
                 })
@@ -231,6 +232,8 @@ pub enum ParseError {
     InvalidInstruction {
         /// The number of the invalid line.
         line: usize,
+        /// The invalid instruction.
+        instruction: String,
         /// The parse error.
         error: instruction::ParseError,
     },
