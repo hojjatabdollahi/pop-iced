@@ -2570,6 +2570,11 @@ where
                     }
                 }
             }
+
+            // Redraw all windows
+            for (_, window) in window_manager.iter_mut() {
+                window.raw.request_redraw();
+            }
         }
         Action::Image(action) => match action {
             image::Action::Allocate(handle, sender) => {
