@@ -245,7 +245,7 @@ cosmic-text = { git = "https://github.com/pop-os/cosmic-text.git" }
 dark-light = "1.0"
 cryoglyph = { path = "../../glyphon" }
 resvg = "0.45"
-web-sys = "0.3.69"
+web-sys = "=0.3.85"
 guillotiere = "0.6"
 half = "2.2"
 image = { version = "0.25", default-features = false }
