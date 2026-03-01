@@ -173,12 +173,6 @@ where
             last_status: None,
         }
     }
-
-    /// Sets the [`Id`](widget::Id) of the [`TextEditor`].
-    pub fn id(mut self, id: impl Into<widget::Id>) -> Self {
-        self.id = Some(id.into());
-        self
-    }
 }
 
 impl<'a, Highlighter, Message, Theme, Renderer>
@@ -188,6 +182,12 @@ where
     Theme: Catalog,
     Renderer: text::Renderer,
 {
+    /// Sets the [`Id`](widget::Id) of the [`TextEditor`].
+    pub fn id(mut self, id: impl Into<widget::Id>) -> Self {
+        self.id = Some(id.into());
+        self
+    }
+
     /// Sets the placeholder of the [`TextEditor`].
     pub fn placeholder(
         mut self,
