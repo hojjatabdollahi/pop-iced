@@ -42,7 +42,7 @@ impl From<core::Settings> for Settings {
                 feature = "fira-sans"
             )) && settings.default_font == Font::default()
             {
-                Font::with_name("Fira Sans")
+                Font::new("Fira Sans")
             } else {
                 settings.default_font
             },

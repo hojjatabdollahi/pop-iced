@@ -45,7 +45,13 @@ pub enum Action<T> {
         /// The bytes of the font to load.
         bytes: Cow<'static, [u8]>,
         /// The channel to send back the load result.
-        channel: oneshot::Sender<Result<(), font::Error>>,
+        channel: oneshot::Sender<Result<(), core::font::Error>>,
+    },
+
+    /// Lists all system font families.
+    ListFonts {
+        /// The channel to send back the list result.
+        channel: oneshot::Sender<Result<Vec<core::font::Family>, core::font::Error>>,
     },
 
     /// Run a widget operation.
@@ -102,6 +108,7 @@ impl<T> Action<T> {
             Action::LoadFont { bytes, channel } => {
                 Err(Action::LoadFont { bytes, channel })
             }
+            Action::ListFonts { channel } => Err(Action::ListFonts { channel }),
             Action::Widget(operation) => Err(Action::Widget(operation)),
             Action::Clipboard(action) => Err(Action::Clipboard(action)),
             Action::Window(action) => Err(Action::Window(action)),
@@ -126,6 +133,9 @@ where
             Action::Output(output) => write!(f, "Action::Output({output:?})"),
             Action::LoadFont { .. } => {
                 write!(f, "Action::LoadFont")
+            }
+            Action::ListFonts { .. } => {
+                write!(f, "Action::ListFonts")
             }
             Action::Widget { .. } => {
                 write!(f, "Action::Widget")

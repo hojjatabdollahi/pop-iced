@@ -2591,10 +2591,14 @@ where
         },
         Action::LoadFont { bytes, channel } => {
             if let Some(compositor) = compositor {
-                // TODO: Error handling (?)
-                compositor.load_font(bytes.clone());
-
-                let _ = channel.send(Ok(()));
+                let result = compositor.load_font(bytes.clone());
+                let _ = channel.send(result);
+            }
+        }
+        Action::ListFonts { channel } => {
+            if let Some(compositor) = compositor {
+                let fonts = compositor.list_fonts();
+                let _ = channel.send(fonts);
             }
         }
         Action::Tick => {
