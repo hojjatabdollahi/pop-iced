@@ -101,8 +101,8 @@ where
         state
             .theme(&self.program, window)
             .as_ref()
-            .and_then(theme::Base::palette)
-            .map(|palette| Theme::custom("Tester", palette))
+            .and_then(theme::Base::seed)
+            .map(|seed| Theme::custom("Tester", seed))
     }
 }
 
@@ -571,7 +571,7 @@ impl<P: Program + 'static> Tester<P> {
 
             container(row![icon.size(14), label].align_y(Center).spacing(8))
                 .style(|theme: &Theme| {
-                    let palette = theme.extended_palette();
+                    let palette = theme.palette();
 
                     container::Style {
                         text_color: Some(match &self.state {
@@ -585,15 +585,9 @@ impl<P: Program + 'static> Tester<P> {
                                 palette.warning.base.color
                             }
                             State::Playing { outcome, .. } => match outcome {
-                                Outcome::Running => theme.palette().primary,
-                                Outcome::Failed => theme.palette().danger,
-                                Outcome::Success => {
-                                    theme
-                                        .extended_palette()
-                                        .success
-                                        .strong
-                                        .color
-                                }
+                                Outcome::Running => palette.primary.base.color,
+                                Outcome::Failed => palette.danger.base.color,
+                                Outcome::Success => palette.success.strong.color,
                             },
                         }),
                         ..container::Style::default()
@@ -633,7 +627,7 @@ impl<P: Program + 'static> Tester<P> {
             }),
         )
         .style(|theme: &Theme| {
-            let palette = theme.extended_palette();
+            let palette = theme.palette();
 
             container::Style {
                 border: border::width(2.0).color(match &self.state {
@@ -660,9 +654,8 @@ impl<P: Program + 'static> Tester<P> {
             container(self.controls().map(Tick::Tester))
                 .width(250)
                 .padding(10)
-                .style(|theme| container::Style::default().background(
-                    theme.extended_palette().background.weakest.color
-                )),
+                .style(|theme| container::Style::default()
+                    .background(theme.palette().background.weakest.color)),
         ]
         .into()
     }
@@ -744,31 +737,17 @@ impl<P: Program + 'static> Tester<P> {
                                             if *current == i + 1 {
                                                 Some(match outcome {
                                                     Outcome::Running => {
-                                                        theme.palette().primary
+                                                        theme.palette().primary.base.color
                                                     }
                                                     Outcome::Failed => {
-                                                        theme
-                                                            .extended_palette()
-                                                            .danger
-                                                            .strong
-                                                            .color
+                                                        theme.palette().danger.strong.color
                                                     }
                                                     Outcome::Success => {
-                                                        theme
-                                                            .extended_palette()
-                                                            .success
-                                                            .strong
-                                                            .color
+                                                        theme.palette().success.strong.color
                                                     }
                                                 })
                                             } else if *current > i + 1 {
-                                                Some(
-                                                    theme
-                                                        .extended_palette()
-                                                        .success
-                                                        .strong
-                                                        .color,
-                                                )
+                                                Some(theme.palette().success.strong.color)
                                             } else {
                                                 None
                                             }
@@ -909,7 +888,7 @@ where
                 .width(Fill)
                 .height(24)
                 .style(|theme: &core::Theme, status| {
-                    let palette = theme.extended_palette();
+                    let palette = theme.palette();
 
                     slider::Style {
                         rail: slider::Rail {
@@ -939,12 +918,12 @@ where
                 })
         )
         .style(|theme| container::Style::default()
-            .background(theme.extended_palette().background.weak.color)
+            .background(theme.palette().background.weak.color)
             .border(border::rounded(2))),
         row![
             text(label).size(14).style(|theme: &core::Theme| {
                 text::Style {
-                    color: Some(theme.extended_palette().background.weak.text),
+                    color: Some(theme.palette().background.weak.text),
                 }
             }),
             space::horizontal(),

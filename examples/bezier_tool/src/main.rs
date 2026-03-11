@@ -155,7 +155,7 @@ mod bezier {
                         &Path::rectangle(Point::ORIGIN, frame.size()),
                         Stroke::default()
                             .with_width(2.0)
-                            .with_color(theme.palette().text),
+                            .with_color(theme.seed().text),
                     );
                 });
 
@@ -200,7 +200,7 @@ mod bezier {
                 &curves,
                 Stroke::default()
                     .with_width(2.0)
-                    .with_color(theme.palette().text),
+                    .with_color(theme.seed().text),
             );
         }
     }
@@ -229,7 +229,7 @@ mod bezier {
                             &line,
                             Stroke::default()
                                 .with_width(2.0)
-                                .with_color(theme.palette().text),
+                                .with_color(theme.seed().text),
                         );
                     }
                     Pending::Two { from, to } => {

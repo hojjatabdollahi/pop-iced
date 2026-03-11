@@ -705,7 +705,7 @@ impl Catalog for Theme {
 
 /// A primary checkbox; denoting a main toggle.
 pub fn primary(theme: &Theme, status: Status) -> Style {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     match status {
         Status::Active { is_checked } => styled(
@@ -734,7 +734,7 @@ pub fn primary(theme: &Theme, status: Status) -> Style {
 
 /// A secondary checkbox; denoting a complementary toggle.
 pub fn secondary(theme: &Theme, status: Status) -> Style {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     match status {
         Status::Active { is_checked } => styled(
@@ -763,7 +763,7 @@ pub fn secondary(theme: &Theme, status: Status) -> Style {
 
 /// A success checkbox; denoting a positive toggle.
 pub fn success(theme: &Theme, status: Status) -> Style {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     match status {
         Status::Active { is_checked } => styled(
@@ -792,7 +792,7 @@ pub fn success(theme: &Theme, status: Status) -> Style {
 
 /// A danger checkbox; denoting a negative toggle.
 pub fn danger(theme: &Theme, status: Status) -> Style {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     match status {
         Status::Active { is_checked } => styled(

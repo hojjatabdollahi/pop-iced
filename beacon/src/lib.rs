@@ -10,7 +10,7 @@ mod stream;
 pub use client::Client;
 pub use span::Span;
 
-use crate::core::theme;
+use crate::core::theme::palette;
 use crate::core::time::{Duration, SystemTime};
 use crate::error::Error;
 use crate::span::present;
@@ -54,7 +54,7 @@ pub enum Event {
         at: SystemTime,
         name: String,
         version: Version,
-        theme: Option<theme::Palette>,
+        theme: Option<palette::Seed>,
         can_time_travel: bool,
     },
     Disconnected {
@@ -62,7 +62,7 @@ pub enum Event {
     },
     ThemeChanged {
         at: SystemTime,
-        palette: theme::Palette,
+        seed: palette::Seed,
     },
     SpanFinished {
         at: SystemTime,
@@ -184,12 +184,12 @@ pub fn run() -> impl Stream<Item = Event> {
                                     .await;
                             }
                             client::Message::EventLogged { at, event } => {
-                                match event {
-                                    client::Event::ThemeChanged(palette) => {
+                                 match event {
+                                    client::Event::ThemeChanged(seed) => {
                                         let _ = output
                                             .send(Event::ThemeChanged {
                                                 at,
-                                                palette,
+                                                seed,
                                             })
                                             .await;
                                     }

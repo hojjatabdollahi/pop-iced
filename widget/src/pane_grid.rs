@@ -1369,7 +1369,7 @@ impl Catalog for Theme {
 
 /// The default style of a [`PaneGrid`].
 pub fn default(theme: &Theme) -> Style {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     Style {
         hovered_region: Highlight {
