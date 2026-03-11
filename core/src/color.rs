@@ -1,3 +1,5 @@
+use crate::animation::Interpolable;
+
 /// A color in the `sRGB` color space.
 ///
 /// # String Representation
@@ -144,6 +146,22 @@ impl Color {
             a: self.a * factor,
             ..self
         }
+    }
+
+    /// Mixes the current [`Color`] with another one by the given factor.
+    pub fn mix(self, b: Color, factor: f32) -> Color {
+        let b_amount = factor.clamp(0.0, 1.0);
+        let a_amount = 1.0 - b_amount;
+
+        let a_linear = self.into_linear().map(|c| c * a_amount);
+        let b_linear = b.into_linear().map(|c| c * b_amount);
+
+        Color::from_linear_rgba(
+            a_linear[0] + b_linear[0],
+            a_linear[1] + b_linear[1],
+            a_linear[2] + b_linear[2],
+            a_linear[3] + b_linear[3],
+        )
     }
 
     /// Returns the relative luminance of the [`Color`].
@@ -327,6 +345,13 @@ impl From<Color> for palette::Srgb<f32> {
 impl From<Color> for palette::Srgba<f32> {
     fn from(color: Color) -> Self {
         palette::Srgba::new(color.r, color.g, color.b, color.a)
+    }
+}
+
+impl Interpolable for Color {
+    /// Interpolates the color. Equivalent to [`Color::mix`].
+    fn interpolated(&self, other: Self, ratio: f32) -> Self {
+        self.mix(other, ratio)
     }
 }
 
