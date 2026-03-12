@@ -6,7 +6,8 @@ use dnd::{DndDestinationRectangle, DndSurface};
 use iced_core::clipboard::DndSource;
 use window_clipboard::mime::{AllowedMimeTypes, AsMimeTypes};
 
-use crate::{oneshot, task, Action, Task};
+use crate::futures::futures::channel::oneshot;
+use crate::{Action, Task, task};
 
 /// An action to be performed on the system.
 pub enum DndAction {

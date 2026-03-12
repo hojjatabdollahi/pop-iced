@@ -1,16 +1,16 @@
+use crate::core::renderer;
 use crate::core::{Color, Rectangle, Size};
 use crate::graphics::compositor::{self, Information};
 use crate::graphics::damage;
 use crate::graphics::error::{self, Error};
-use crate::graphics::{self, Shell, Viewport};
-use crate::{Layer, Renderer, Settings};
+use crate::graphics::{Shell, Viewport};
+use crate::{Layer, Renderer};
 
 use std::collections::VecDeque;
 use std::num::NonZeroU32;
 
 pub struct Compositor {
     context: softbuffer::Context<Box<dyn compositor::Display>>,
-    settings: Settings,
 }
 
 pub struct Surface {
@@ -34,7 +34,7 @@ impl crate::graphics::Compositor for Compositor {
     type Surface = Surface;
 
     async fn with_backend(
-        settings: graphics::Settings,
+        _settings: compositor::Settings,
         display: impl compositor::Display,
         _compatible_window: impl compositor::Window,
         _shell: Shell,
@@ -42,7 +42,7 @@ impl crate::graphics::Compositor for Compositor {
     ) -> Result<Self, Error> {
         match backend {
             None | Some("tiny-skia") | Some("tiny_skia") => {
-                Ok(new(settings.into(), display))
+                Ok(new(display))
             }
             Some(backend) => Err(Error::GraphicsAdapterNotFound {
                 backend: "tiny-skia",
@@ -53,11 +53,8 @@ impl crate::graphics::Compositor for Compositor {
         }
     }
 
-    fn create_renderer(&self) -> Self::Renderer {
-        Renderer::new(
-            self.settings.default_font,
-            self.settings.default_text_size,
-        )
+    fn create_renderer(&self, settings: renderer::Settings) -> Self::Renderer {
+        Renderer::new(settings)
     }
 
     fn create_surface<W: compositor::Window + Clone>(
@@ -139,15 +136,13 @@ impl crate::graphics::Compositor for Compositor {
     }
 }
 
-pub fn new(
-    settings: Settings,
-    display: impl compositor::Display,
+pub fn new(display: impl compositor::Display,
 ) -> Compositor {
     #[allow(unsafe_code)]
     let context = softbuffer::Context::new(Box::new(display) as _)
         .expect("Create softbuffer context");
 
-    Compositor { context, settings }
+    Compositor { context }
 }
 
 pub fn present(

@@ -59,6 +59,7 @@ where
         window: Arc<dyn winit::window::Window>,
         program: &program::Instance<P>,
         compositor: &mut C,
+        renderer_settings: renderer::Settings,
         exit_on_close_request: bool,
         system_theme: theme::Mode,
         resize_border: u32,
@@ -71,7 +72,7 @@ where
             surface_size.width,
             surface_size.height,
         );
-        let renderer = compositor.create_renderer();
+        let renderer = compositor.create_renderer(renderer_settings);
 
         self.aliases.retain(|w, i| *w != window.id() && *i != id);
         let _ = self.aliases.insert(window.id(), id);

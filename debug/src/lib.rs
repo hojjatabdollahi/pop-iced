@@ -245,7 +245,7 @@ mod internal {
         }
     }
 
-    pub fn theme_changed(f: impl FnOnce() -> Option<theme::Palette>) {
+    pub fn theme_changed(f: impl FnOnce() -> Option<theme::palette::Seed>) {
         let Some(palette) = f() else {
             return;
         };
@@ -433,7 +433,7 @@ mod internal {
         false
     }
 
-    pub fn theme_changed(_f: impl FnOnce() -> Option<theme::Palette>) {}
+    pub fn theme_changed(_f: impl FnOnce() -> Option<theme::palette::Seed>) {}
 
     pub fn tasks_spawned(_amount: usize) {}
 

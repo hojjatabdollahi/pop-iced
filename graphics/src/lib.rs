@@ -9,7 +9,6 @@
 )]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 mod antialiasing;
-mod settings;
 mod viewport;
 
 pub mod cache;
@@ -21,6 +20,7 @@ pub mod gradient;
 pub mod image;
 pub mod layer;
 pub mod mesh;
+pub mod settings;
 pub mod shell;
 pub mod text;
 

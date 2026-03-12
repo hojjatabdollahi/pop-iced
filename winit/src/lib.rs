@@ -70,6 +70,7 @@ use crate::futures::futures::{Future, StreamExt};
 use crate::futures::subscription;
 use crate::futures::{Executor, Runtime};
 use crate::graphics::{Compositor, Shell, compositor};
+use crate::runtime::font;
 use crate::runtime::image;
 use crate::runtime::system;
 use crate::runtime::user_interface::{self, UserInterface};
@@ -104,8 +105,9 @@ where
     #[cfg(not(all(feature = "cctk", target_os = "linux")))]
     let is_wayland = false;
 
-    // TODO this is new..
     let graphics_settings = settings.clone().into();
+    let compositor_settings = compositor::Settings::from(&settings);
+    let renderer_settings = renderer::Settings::from(&settings);
     let display_handle = event_loop.owned_display_handle();
 
     let (event_sender, event_receiver) = mpsc::unbounded();
@@ -171,6 +173,7 @@ where
         is_daemon,
         is_wayland,
         graphics_settings,
+        renderer_settings,
         settings.fonts.clone(),
         system_theme_receiver,
     ));
@@ -757,6 +760,7 @@ async fn run_instance<P>(
     is_daemon: bool,
     is_wayland: bool,
     graphics_settings: graphics::Settings,
+    mut renderer_settings: renderer::Settings,
     default_fonts: Vec<Cow<'static, [u8]>>,
     mut _system_theme: oneshot::Receiver<theme::Mode>,
 ) where
@@ -911,9 +915,10 @@ async fn run_instance<P>(
                     window,
                     &program,
                     compositor,
+                    renderer_settings,
                     exit_on_close_request,
                     system_theme,
-                    resize_border
+                    resize_border,
                 );
 
                 window.raw.set_theme(conversion::window_theme(
@@ -1017,6 +1022,7 @@ async fn run_instance<P>(
                     &mut is_window_opening,
                     &mut system_theme,
                     &mut platform_specific_handler,
+                    &mut renderer_settings,
                 );
                 if exited {
                     runtime.track(None.into_iter());
@@ -1177,6 +1183,7 @@ async fn run_instance<P>(
                                 &mut is_window_opening,
                                 &mut system_theme,
                                 &mut platform_specific_handler,
+                    &mut renderer_settings,
                             );
                         }
 
@@ -1375,6 +1382,7 @@ async fn run_instance<P>(
                         &mut is_window_opening,
                         &mut system_theme,
                         &mut platform_specific_handler,
+                    &mut renderer_settings,
                     );
                 } else {
                     window.state.update(&program, window.raw.as_ref(), &event);
@@ -1568,6 +1576,7 @@ async fn run_instance<P>(
                             &mut is_window_opening,
                             &mut system_theme,
                             &mut platform_specific_handler,
+                    &mut renderer_settings,
                         );
                         if exited {
                             runtime.track(None.into_iter());
@@ -1804,7 +1813,7 @@ async fn run_instance<P>(
                         let mut icon_surface =
                             i.downcast::<P::Theme, P::Renderer>();
 
-                        let mut renderer = compositor.create_renderer();
+                        let mut renderer = compositor.create_renderer(renderer_settings);
 
                         let lim = core::layout::Limits::new(
                             Size::new(1., 1.),
@@ -1964,7 +1973,10 @@ where
     let create_compositor = {
         let display_handle = display_handle.clone();
         let proxy = proxy.clone();
-        let graphics_settings = (*graphics_settings).clone();
+        let compositor_settings = compositor::Settings {
+            antialiasing: graphics_settings.antialiasing,
+            vsync: graphics_settings.vsync,
+        };
         let window = window.clone();
         let default_fonts = default_fonts.to_vec();
 
@@ -1973,7 +1985,7 @@ where
 
             let mut compositor =
                 <P::Renderer as compositor::Default>::Compositor::new(
-                    graphics_settings,
+                    compositor_settings,
                     display_handle,
                     window,
                     shell,
@@ -2120,6 +2132,7 @@ fn run_action<'a, P, C>(
     is_window_opening: &mut bool,
     system_theme: &mut theme::Mode,
     platform_specific: &mut crate::platform_specific::PlatformSpecific,
+    renderer_settings: &mut renderer::Settings,
 ) -> bool
 where
     P: Program,
@@ -2552,6 +2565,43 @@ where
                 }
             }
         },
+        Action::Font(action) => match action {
+            font::Action::Load { bytes, channel } => {
+                if let Some(compositor) = compositor {
+                    let result = compositor.load_font(bytes.clone());
+                    let _ = channel.send(result);
+                }
+            }
+            font::Action::List { channel } => {
+                if let Some(compositor) = compositor {
+                    let fonts = compositor.list_fonts();
+                    let _ = channel.send(fonts);
+                }
+            }
+            font::Action::SetDefaults { font, text_size } => {
+                renderer_settings.default_font = font;
+                renderer_settings.default_text_size = text_size;
+
+                let Some(compositor) = compositor else {
+                    return false;
+                };
+
+                // Recreate renderers and relayout all windows
+                for (id, window) in window_manager.iter_mut() {
+                    window.renderer = compositor.create_renderer(*renderer_settings);
+
+                    let Some(ui) = interfaces.remove(&id) else {
+                        continue;
+                    };
+
+                    let size = window.logical_size();
+                    let ui = ui.relayout(size, &mut window.renderer);
+                    let _ = interfaces.insert(id, ui);
+
+                    window.raw.request_redraw();
+                }
+            }
+        },
         Action::Widget(operation) => {
             let mut current_operation = Some(operation);
 
@@ -2589,18 +2639,6 @@ where
                 }
             }
         },
-        Action::LoadFont { bytes, channel } => {
-            if let Some(compositor) = compositor {
-                let result = compositor.load_font(bytes.clone());
-                let _ = channel.send(result);
-            }
-        }
-        Action::ListFonts { channel } => {
-            if let Some(compositor) = compositor {
-                let fonts = compositor.list_fonts();
-                let _ = channel.send(fonts);
-            }
-        }
         Action::Tick => {
             for (_id, window) in window_manager.iter_mut() {
                 window.renderer.tick();

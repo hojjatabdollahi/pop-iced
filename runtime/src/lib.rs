@@ -30,29 +30,13 @@ pub use window::Window;
 
 use crate::core::Color;
 use crate::core::Event;
-use crate::futures::futures::channel::oneshot;
 
-use std::borrow::Cow;
 use std::fmt;
 
 /// An action that the iced runtime can perform.
 pub enum Action<T> {
     /// Output some value.
     Output(T),
-
-    /// Load a font from its bytes.
-    LoadFont {
-        /// The bytes of the font to load.
-        bytes: Cow<'static, [u8]>,
-        /// The channel to send back the load result.
-        channel: oneshot::Sender<Result<(), core::font::Error>>,
-    },
-
-    /// Lists all system font families.
-    ListFonts {
-        /// The channel to send back the list result.
-        channel: oneshot::Sender<Result<Vec<core::font::Family>, core::font::Error>>,
-    },
 
     /// Run a widget operation.
     Widget(Box<dyn core::widget::Operation>),
@@ -65,6 +49,9 @@ pub enum Action<T> {
 
     /// Run a system action.
     System(system::Action),
+
+    /// Run a font action.
+    Font(font::Action),
 
     /// Run an image action.
     Image(image::Action),
@@ -105,14 +92,11 @@ impl<T> Action<T> {
     fn output<O>(self) -> Result<T, Action<O>> {
         match self {
             Action::Output(output) => Ok(output),
-            Action::LoadFont { bytes, channel } => {
-                Err(Action::LoadFont { bytes, channel })
-            }
-            Action::ListFonts { channel } => Err(Action::ListFonts { channel }),
             Action::Widget(operation) => Err(Action::Widget(operation)),
             Action::Clipboard(action) => Err(Action::Clipboard(action)),
             Action::Window(action) => Err(Action::Window(action)),
             Action::System(action) => Err(Action::System(action)),
+            Action::Font(action) => Err(Action::Font(action)),
             Action::Image(action) => Err(Action::Image(action)),
             Action::Event { window, event } => Err(Action::Event { window, event }),
             Action::Tick => Err(Action::Tick),
@@ -131,12 +115,6 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Action::Output(output) => write!(f, "Action::Output({output:?})"),
-            Action::LoadFont { .. } => {
-                write!(f, "Action::LoadFont")
-            }
-            Action::ListFonts { .. } => {
-                write!(f, "Action::ListFonts")
-            }
             Action::Widget { .. } => {
                 write!(f, "Action::Widget")
             }
@@ -145,6 +123,9 @@ where
             }
             Action::Window(_) => write!(f, "Action::Window"),
             Action::System(action) => write!(f, "Action::System({action:?})"),
+            Action::Font(action) => {
+                write!(f, "Action::Font({action:?})")
+            }
             Action::Image(_) => write!(f, "Action::Image"),
             Action::Event { window, event } => write!(
                 f,
@@ -196,7 +177,7 @@ impl DefaultStyle for iced_core::Theme {
 
 /// The default [`Appearance`] of a [`Program`] with the built-in [`iced_core::Theme`].
 pub fn default(theme: &iced_core::Theme) -> Appearance {
-    let palette = theme.extended_palette();
+    let palette = theme.palette();
 
     Appearance {
         background_color: palette.background.base.color,
