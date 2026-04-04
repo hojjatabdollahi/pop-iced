@@ -47,12 +47,13 @@ impl Loupe {
 
 mod loupe {
     use iced::advanced::Renderer as _;
+    use iced::advanced::Shell;
     use iced::advanced::layout::{self, Layout};
     use iced::advanced::renderer;
     use iced::advanced::widget::{self, Widget};
     use iced::mouse;
     use iced::{
-        Color, Element, Length, Rectangle, Renderer, Size, Theme,
+        Color, Element, Event, Length, Rectangle, Renderer, Size, Theme,
         Transformation,
     };
 
@@ -102,6 +103,21 @@ mod loupe {
             limits: &layout::Limits,
         ) -> layout::Node {
             self.content.as_widget_mut().layout(tree, renderer, limits)
+        }
+
+        fn update(
+            &mut self,
+            _tree: &mut widget::Tree,
+            _event: &Event,
+            layout: Layout<'_>,
+            cursor: mouse::Cursor,
+            _renderer: &Renderer,
+            shell: &mut Shell<'_, Message>,
+            _viewport: &Rectangle,
+        ) {
+            if cursor.is_over(layout.bounds().expand(10)) {
+                shell.request_redraw();
+            }
         }
 
         fn draw(
