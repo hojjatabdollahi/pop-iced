@@ -534,26 +534,25 @@ impl editor::Editor for Editor {
 
             const MAX_HINTING_SIZE: f32 = 18.0;
 
-            let new_hint_factor = if new_hint_factor
-                .is_some_and(|hint_factor| hint_factor * new_size.0 < MAX_HINTING_SIZE)
-            {
-                new_hint_factor
-            } else {
-                None
-            };
+            let new_hint_factor =
+                if new_hint_factor.is_some_and(|hint_factor| {
+                    hint_factor * new_size.0 < MAX_HINTING_SIZE
+                }) {
+                    new_hint_factor
+                } else {
+                    None
+                };
 
-            if new_hint_factor != internal.hint.then_some(internal.hint_factor) {
+            if new_hint_factor != internal.hint.then_some(internal.hint_factor)
+            {
                 internal.hint = new_hint_factor.is_some();
                 internal.hint_factor = new_hint_factor.unwrap_or(1.0);
 
-                buffer.set_hinting(
-                    font_system.raw(),
-                    if internal.hint {
-                        cosmic_text::Hinting::Enabled
-                    } else {
-                        cosmic_text::Hinting::Disabled
-                    },
-                );
+                buffer.set_hinting(if internal.hint {
+                    cosmic_text::Hinting::Enabled
+                } else {
+                    cosmic_text::Hinting::Disabled
+                });
 
                 hinting_changed = true;
             }

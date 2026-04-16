@@ -931,7 +931,7 @@ async fn run_instance<P>(
                 let logical_size = window.state.logical_size();
 
                 #[cfg(feature = "hinting")]
-                window.renderer.hint(window.state.scale_factor());
+                window.renderer.hint(window.state.scale_factor() as f32);
 
                 let _ = user_interfaces.insert(
                     id,
@@ -1073,7 +1073,7 @@ async fn run_instance<P>(
                 // Window was resized between redraws
                 if window.surface_version != window.state.surface_version() {
                     #[cfg(feature = "hinting")]
-                    window.renderer.hint(window.state.scale_factor());
+                    window.renderer.hint(window.state.scale_factor() as f32);
 
                     let ui = user_interfaces
                         .remove(&id)
@@ -2657,7 +2657,7 @@ where
         window.state.synchronize(program, id, window.raw.as_ref());
 
         #[cfg(feature = "hinting")]
-        window.renderer.hint(window.state.scale_factor());
+        window.renderer.hint(window.state.scale_factor() as f32);
     }
 
     debug::theme_changed(|| {

@@ -97,15 +97,13 @@ impl core::text::Paragraph for Paragraph {
             font_system.raw(),
             cosmic_text::Metrics::new(
                 size,
-                f32::from(text.line_height.to_absolute(text.size)) * hint_factor,
+                f32::from(text.line_height.to_absolute(text.size))
+                    * hint_factor,
             ),
         );
 
         if hint {
-            buffer.set_hinting(
-                font_system.raw(),
-                cosmic_text::Hinting::Enabled,
-            );
+            buffer.set_hinting(cosmic_text::Hinting::Enabled);
         }
 
         buffer.set_size(
@@ -165,15 +163,13 @@ impl core::text::Paragraph for Paragraph {
             font_system.raw(),
             cosmic_text::Metrics::new(
                 size,
-                f32::from(text.line_height.to_absolute(text.size)) * hint_factor,
+                f32::from(text.line_height.to_absolute(text.size))
+                    * hint_factor,
             ),
         );
 
         if hint {
-            buffer.set_hinting(
-                font_system.raw(),
-                cosmic_text::Hinting::Enabled,
-            );
+            buffer.set_hinting(cosmic_text::Hinting::Enabled);
         }
 
         buffer.set_size(
@@ -279,7 +275,8 @@ impl core::text::Paragraph for Paragraph {
             || paragraph.wrapping != text.wrapping
             || paragraph.align_x != text.align_x
             || paragraph.align_y != text.align_y
-            || paragraph.hint.then_some(paragraph.hint_factor) != text.hint_factor
+            || paragraph.hint.then_some(paragraph.hint_factor)
+                != text.hint_factor
         {
             core::text::Difference::Shape
         } else if paragraph.bounds != text.bounds {
@@ -402,7 +399,6 @@ impl core::text::Paragraph for Paragraph {
             let y = line_top + glyph.y;
 
             let new_bounds = || {
-                
                 Rectangle::new(
                     Point::new(glyph.x, y),
                     Size::new(
@@ -467,7 +463,8 @@ impl core::text::Paragraph for Paragraph {
         };
 
         Some(Point::new(
-            (glyph.x + glyph.x_offset * glyph.font_size + advance) / self.0.hint_factor,
+            (glyph.x + glyph.x_offset * glyph.font_size + advance)
+                / self.0.hint_factor,
             (glyph.y - glyph.y_offset * glyph.font_size) / self.0.hint_factor,
         ))
     }

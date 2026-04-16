@@ -70,7 +70,7 @@ sysinfo = ["iced_winit/sysinfo"]
 web-colors = ["iced_renderer/web-colors"]
 # Enables pixel snapping for crisp edges by default (can cause jitter!)
 # Enables the `widget::selector` module
-crisp = ["iced_core/crisp", "iced_widget/crisp"]
+crisp = ["iced_core/crisp"]
 # Enables the WebGL backend
 
 
@@ -82,11 +82,11 @@ selector = ["iced_runtime/selector"]
 
 # Enables basic text shaping by default
 fira-sans = [
-    "iced_renderer/fira-sans",
+  "iced_renderer/fira-sans",
 ] # Embeds Fira Sans into the final application; useful for testing and Wasm builds
 advanced = [
-    "iced_core/advanced",
-    "iced_widget/advanced",
+  "iced_core/advanced",
+  "iced_widget/advanced",
 ] # Enables the advanced module
 basic-shaping = ["iced_core/basic-shaping"]
 # Enables advanced text shaping by default
@@ -107,16 +107,16 @@ linux-theme-detection = ["iced_winit/linux-theme-detection"]
 x11 = ["iced_renderer/x11", "iced_winit/x11"]
 # Enables the `accesskit` accessibility library
 a11y = [
-    "iced_accessibility",
-    "iced_core/a11y",
-    "iced_widget/a11y",
-    "iced_winit?/a11y",
+  "iced_accessibility",
+  "iced_core/a11y",
+  "iced_widget/a11y",
+  "iced_winit?/a11y",
 ]
 # Enables the winit shell. Conflicts with `wayland` and `glutin`.
 winit = [
-    "iced_winit",
-    "iced_accessibility?/accesskit_winit",
-    "iced_program/winit",
+  "iced_winit",
+  "iced_accessibility?/accesskit_winit",
+  "iced_program/winit",
 ]
 wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
 cctk = ["iced_winit/cctk", "iced_widget/cctk", "iced_core/cctk", "wayland"]
@@ -171,25 +171,25 @@ strip = "debuginfo"
 
 [workspace]
 members = [
-    "beacon",
-    "core",
-    "debug",
-    "devtools",
-    "futures",
-    "graphics",
-    "highlighter",
-    "program",
-    "renderer",
-    "runtime",
-    "selector",
-    "test",
-    "tester",
-    "tiny_skia",
-    "wgpu",
-    "widget",
-    "winit",
-    "examples/*",
-    "accessibility",
+  "beacon",
+  "core",
+  "debug",
+  "devtools",
+  "futures",
+  "graphics",
+  "highlighter",
+  "program",
+  "renderer",
+  "runtime",
+  "selector",
+  "test",
+  "tester",
+  "tiny_skia",
+  "wgpu",
+  "widget",
+  "winit",
+  "examples/*",
+  "accessibility",
 ]
 exclude = ["examples/integration"]
 
@@ -226,8 +226,8 @@ iced_winit = { version = "0.14.0", path = "winit", default-features = false }
 bincode = "1.3"
 cargo-hot = { version = "0.1", package = "cargo-hot-protocol" }
 futures = { version = "0.3", default-features = false, features = [
-    "std",
-    "async-await",
+  "std",
+  "async-await",
 ] }
 glam = "0.25"
 iced_accessibility = { version = "0.1", path = "accessibility" }
@@ -272,8 +272,8 @@ smol_str = "0.3"
 sysinfo = "0.33"
 thiserror = "2"
 tiny-skia = { version = "0.11", default-features = false, features = [
-    "std",
-    "simd",
+  "std",
+  "simd",
 ] }
 cctk = { git = "https://github.com/pop-os/cosmic-protocols", package = "cosmic-client-toolkit", rev = "160b086" }
 softbuffer = { git = "https://github.com/pop-os/softbuffer", tag = "cosmic-4.0" }
@@ -281,7 +281,7 @@ syntect = "5.2"
 tokio = "1.0"
 tracing = "0.1"
 two-face = { version = "0.4", default-features = false, features = [
-    "syntect-default-fancy",
+  "syntect-default-fancy",
 ] }
 unicode-segmentation = "1.0"
 url = "2.5"
@@ -289,8 +289,8 @@ wasm-bindgen-futures = "0.4"
 wasmtimer = "0.4.2"
 web-time = "1.1"
 wgpu = { version = "27.0", default-features = false, features = [
-    "std",
-    "wgsl",
+  "std",
+  "wgsl",
 ] }
 wayland-protocols = { version = "0.32.1", features = ["staging"] }
 wayland-client = { version = "0.31.5" }

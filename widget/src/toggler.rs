@@ -500,9 +500,6 @@ where
 
         let scale_factor = renderer.scale_factor().unwrap_or(1.0);
         let bounds = toggler_layout.bounds();
-        let border_radius = style
-            .border_radius
-            .unwrap_or_else(|| border::Radius::new(bounds.height / 2.0));
 
         renderer.fill_quad(
             renderer::Quad {
