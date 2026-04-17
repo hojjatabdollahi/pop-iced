@@ -9,6 +9,7 @@ use iced_renderer::core::widget::Operation;
 
 mod cache;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::Element;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
@@ -203,6 +204,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -426,10 +428,11 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         let _ = self.with_overlay_mut_maybe(|overlay| {
-            overlay.update(event, layout, cursor, renderer, shell);
+            overlay.update(event, layout, cursor, renderer, clipboard, shell);
         });
     }
 }

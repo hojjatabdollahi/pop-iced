@@ -182,6 +182,7 @@ impl WaylandSpecific {
         user_interfaces: &mut UserInterfaces<'a, P>,
         clipboard: &mut crate::Clipboard,
         create_compositor: CreateCompositor<'b, P>,
+        renderer_settings: iced_futures::core::renderer::Settings,
     ) where
         P: Program,
     {
@@ -227,6 +228,7 @@ impl WaylandSpecific {
                         clipboard,
                         subsurface_state,
                         create_compositor,
+                        renderer_settings,
                     )
                     .await;
             }

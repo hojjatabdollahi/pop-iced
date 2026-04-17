@@ -2,7 +2,7 @@ use iced_core::window::Id;
 
 use std::fmt;
 
-use crate::oneshot;
+use crate::futures::futures::channel::oneshot;
 
 /// xdg-activation Actions
 pub enum Action {

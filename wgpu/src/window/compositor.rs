@@ -156,6 +156,7 @@ impl Compositor {
             if let Some((vendor_id, device_id)) = ids {
                 adapter = instance
                     .enumerate_adapters(settings.backends)
+                    .await
                     .into_iter()
                     .filter(|adapter| {
                         let info = adapter.get_info();

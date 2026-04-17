@@ -1053,9 +1053,8 @@ async fn run_instance<P>(
                 } 
                 // XX must force update to corner radius before the surface is committed.
                 #[cfg(all(feature = "cctk", target_os = "linux"))]
-                if (window.surface_version != window.state.surface_version()
-                    || window.logical_size() != window.state.logical_size()
-                    ) && !crate::subsurface_widget::is_subsurface(window_id)
+                if window.surface_version != window.state.surface_version()
+                    && !crate::subsurface_widget::is_subsurface(window_id)
                 {
                     platform_specific_handler.send_wayland(
                         platform_specific::Action::ResizeWindow(id),
@@ -1699,6 +1698,7 @@ async fn run_instance<P>(
                         default_fonts: &default_fonts,
                         runtime: &mut runtime,
                     },
+                    renderer_settings,
                 )
                 .await;
             }

@@ -1,5 +1,6 @@
 //! Build and reuse custom widgets using The Elm Architecture.
 #![allow(deprecated)]
+use crate::core::clipboard::Clipboard;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
 use crate::core::overlay;
@@ -323,6 +324,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -337,6 +339,7 @@ where
                 layout,
                 cursor,
                 renderer,
+                clipboard,
                 &mut local_shell,
                 viewport,
             );
@@ -349,7 +352,6 @@ where
         local_shell.revalidate_layout(|| shell.invalidate_layout());
         shell.request_redraw_at(local_shell.redraw_request());
         shell.request_input_method(local_shell.input_method());
-        shell.clipboard_mut().merge(local_shell.clipboard_mut());
 
         if !local_messages.is_empty() {
             let mut heads = self.state.take().unwrap().into_heads();
@@ -648,6 +650,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         let mut local_messages = Vec::new();
@@ -659,6 +662,7 @@ where
                 layout,
                 cursor,
                 renderer,
+                clipboard,
                 &mut local_shell,
             );
         });
@@ -670,7 +674,6 @@ where
         local_shell.revalidate_layout(|| shell.invalidate_layout());
         shell.request_redraw_at(local_shell.redraw_request());
         shell.request_input_method(local_shell.input_method());
-        shell.clipboard_mut().merge(local_shell.clipboard_mut());
 
         if !local_messages.is_empty() {
             let mut inner =

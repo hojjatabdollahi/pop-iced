@@ -362,6 +362,7 @@ impl SctkEvent {
         clipboard: &mut Clipboard,
         subsurface_state: &mut Option<SubsurfaceState>,
         create_compositor_data: CreateCompositor<'b, P>,
+        renderer_settings: iced_futures::core::renderer::Settings,
     ) where
         P: Program,
     {
@@ -807,12 +808,13 @@ impl SctkEvent {
                         sctk_winit,
                         program,
                         compositor,
+                        renderer_settings,
                         false, // TODO do we want to get this value here?
                         theme::Mode::None, // TODO do we really need to track the system theme here?
                         0,
                     );
                     _ = surface_ids.insert(object_id, wrapper.clone());
-                    let logical_size = window.logical_size();
+                    let logical_size = window.state.logical_size();
 
                     if clipboard.window_id().is_none() {
                         *clipboard = Clipboard::connect(
@@ -916,6 +918,7 @@ impl SctkEvent {
                                     window::Event::Opened {
                                         size: w.state.logical_size(),
                                         position: Default::default(),
+                                        scale_factor: 1.0,
                                     },
                                 ),
                             ))
@@ -1022,12 +1025,13 @@ impl SctkEvent {
                             sctk_winit,
                             program,
                             compositor,
+                            renderer_settings,
                             false, // TODO do we want to get this value here?
                             theme::Mode::None, // TODO do we really need to track the system theme here?
                             0,
                         );
                         window.state.set_ready(false);
-                        let logical_size = window.logical_size();
+                        let logical_size = window.state.logical_size();
 
                         let mut ui = crate::build_user_interface(
                             program,
@@ -1146,6 +1150,7 @@ impl SctkEvent {
                                         window::Event::Opened {
                                             size: size,
                                             position: Default::default(),
+                                            scale_factor: 1.0,
                                         },
                                     ),
                                 ))
@@ -1276,12 +1281,13 @@ impl SctkEvent {
                     sctk_winit,
                     program,
                     compositor,
+                    renderer_settings,
                     false, // TODO do we want to get this value here?
                     theme::Mode::None, // TODO do we really need to track the system theme here?
                     0,
                 );
                 _ = surface_ids.insert(object_id, wrapper.clone());
-                let logical_size = window.logical_size();
+                let logical_size = window.state.logical_size();
                 let mut ui = crate::build_user_interface(
                     program,
                     user_interface::Cache::default(),
@@ -1382,6 +1388,7 @@ impl SctkEvent {
                                 window::Event::Opened {
                                     size: size,
                                     position: Default::default(),
+                                    scale_factor: 1.0,
                                 },
                             ),
                         ))
@@ -1591,11 +1598,12 @@ impl SctkEvent {
                         sctk_winit,
                         program,
                         compositor,
+                        renderer_settings,
                         false, // TODO do we want to get this value here?
                         theme::Mode::None,
                         0,
                     );
-                    let logical_size = window.logical_size();
+                    let logical_size = window.state.logical_size();
 
                     let mut ui = crate::build_user_interface(
                         program,
@@ -1724,6 +1732,7 @@ impl SctkEvent {
                                 window::Event::Opened {
                                     size: w.state.logical_size(),
                                     position: Default::default(),
+                                    scale_factor: 1.0,
                                 },
                             ),
                         ))

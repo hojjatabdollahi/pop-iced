@@ -191,6 +191,7 @@ pub(crate) async fn handle_event<'a, 'b, P>(
     user_interfaces: &mut UserInterfaces<'a, P>,
     clipboard: &mut crate::Clipboard,
     create_compositor: CreateCompositor<'b, P>,
+    renderer_settings: iced_futures::core::renderer::Settings,
 ) where
     P: Program,
 {
@@ -208,6 +209,7 @@ pub(crate) async fn handle_event<'a, 'b, P>(
                     user_interfaces,
                     clipboard,
                     create_compositor,
+                    renderer_settings,
                 )
                 .await;
         }
