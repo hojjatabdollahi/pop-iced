@@ -67,7 +67,8 @@ impl Storage {
             hash_map::Entry::Occupied(entry) => {
                 let upload = entry.into_mut();
 
-                if upload.version != cache.version() || upload.transformation != new_transformation
+                if upload.version != cache.version()
+                    || upload.transformation != new_transformation
                 {
                     if !cache.is_empty() {
                         upload.layer.prepare(
@@ -426,12 +427,9 @@ impl Layer {
 
             let indices = mesh.indices();
 
-            index_offset += self.index_buffer.write(
-                encoder,
-                belt,
-                index_offset,
-                indices,
-            );
+            index_offset +=
+                self.index_buffer
+                    .write(encoder, belt, index_offset, indices);
 
             match mesh {
                 Mesh::Solid { buffers, .. } => {
@@ -442,10 +440,12 @@ impl Layer {
                         &buffers.vertices,
                     );
 
-                    solid_uniform_offset +=
-                        self.solid
-                            .uniforms
-                            .write(encoder, belt, solid_uniform_offset, &[uniforms]);
+                    solid_uniform_offset += self.solid.uniforms.write(
+                        encoder,
+                        belt,
+                        solid_uniform_offset,
+                        &[uniforms],
+                    );
                 }
                 Mesh::Gradient { buffers, .. } => {
                     gradient_vertex_offset += self.gradient.vertices.write(

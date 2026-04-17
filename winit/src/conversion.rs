@@ -3,7 +3,6 @@
 //! [`winit`]: https://github.com/rust-windowing/winit
 //! [`iced_runtime`]: https://github.com/iced-rs/iced/tree/0.14/runtime
 use crate::core::input_method;
-use std::hash::DefaultHasher;
 use std::hash::Hash;
 use std::hash::Hasher;
 use std::sync::Arc;
@@ -14,7 +13,6 @@ use crate::core::theme;
 use crate::core::touch;
 use crate::core::window;
 use crate::core::{Event, Point, Size};
-use iced_futures::core::event::PlatformSpecific;
 use winit::dpi::PhysicalPosition;
 use winit::event::ButtonSource;
 use winit::event::ElementState;
@@ -27,7 +25,7 @@ use winit::keyboard::SmolStr;
 pub fn window_attributes(
     settings: window::Settings,
     title: &str,
-    scale_factor: f64,
+    _scale_factor: f64,
     primary_monitor: Option<winit::monitor::MonitorHandle>,
     _id: Option<String>,
 ) -> winit::window::WindowAttributes {
@@ -195,6 +193,10 @@ pub fn window_attributes(
 }
 
 /// Converts a winit window event into an iced event.
+#[cfg_attr(
+    not(all(feature = "cctk", target_os = "linux")),
+    allow(unused_variables)
+)]
 pub fn window_event(
     event: winit::event::WindowEvent,
     scale_factor: f64,
@@ -396,8 +398,8 @@ pub fn window_event(
             Ime::Commit(content) => input_method::Event::Commit(content),
             Ime::Disabled => input_method::Event::Closed,
             Ime::DeleteSurrounding {
-                before_bytes,
-                after_bytes,
+                before_bytes: _,
+                after_bytes: _,
             } => todo!(),
         })),
         WindowEvent::Focused(focused) => Some(Event::Window(if focused {
@@ -411,13 +413,13 @@ pub fn window_event(
         WindowEvent::DragDropped { paths, .. } => {
             Some(Event::Window(window::Event::FileDropped(paths.clone())))
         }
-        WindowEvent::DragLeft { position } => {
+        WindowEvent::DragLeft { position: _ } => {
             Some(Event::Window(window::Event::FilesHoveredLeft))
         }
 
         WindowEvent::Moved(position) => {
             let winit::dpi::LogicalPosition { x, y } =
-                position.to_logical(f64::from(scale_factor));
+                position.to_logical(scale_factor);
 
             Some(Event::Window(window::Event::Moved(Point::new(x, y))))
         }
@@ -690,7 +692,7 @@ pub fn cursor_position(
     position: winit::dpi::PhysicalPosition<f64>,
     scale_factor: f64,
 ) -> Point {
-    let logical_position = position.to_logical(f64::from(scale_factor));
+    let logical_position = position.to_logical(scale_factor);
 
     Point::new(logical_position.x, logical_position.y)
 }
@@ -707,7 +709,7 @@ enum TouchInternal {
 pub fn touch_event(
     finger: FingerId,
     state: TouchInternal,
-    force: Option<Force>,
+    _force: Option<Force>,
     position: Option<PhysicalPosition<f64>>,
     scale_factor: f64,
 ) -> touch::Event {

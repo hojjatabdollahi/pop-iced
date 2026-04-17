@@ -163,7 +163,9 @@ impl Pipeline {
                     entry_point: Some("fs_main"),
                     targets: &[Some(wgpu::ColorTargetState {
                         format,
-                        blend: Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING),
+                        blend: Some(
+                            wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING,
+                        ),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                     compilation_options:
@@ -322,7 +324,10 @@ impl State {
                             belt,
                             &svg.handle,
                             svg.color,
-                            Size::new(bounds.width as u32, bounds.height as u32),
+                            Size::new(
+                                bounds.width as u32,
+                                bounds.height as u32,
+                            ),
                         )
                     {
                         match atlas.as_mut() {

@@ -43,13 +43,15 @@ window_clipboard.workspace = true
 dnd.workspace = true
 mime.workspace = true
 
-cctk.workspace = true
-cctk.optional = true
 # /TODO(POP)
 [dependencies.iced_accessibility]
 version = "0.1.0"
 path = "../accessibility"
 optional = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+cctk.workspace = true
+cctk.optional = true
 
 [target.'cfg(windows)'.dependencies]
 raw-window-handle.workspace = true

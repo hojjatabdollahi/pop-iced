@@ -1016,7 +1016,7 @@ where
                         shaping: text::Shaping::Advanced,
                         wrapping: self.wrapping,
                         ellipsize: self.ellipsize,
-            hint_factor: None,
+                        hint_factor: None,
                     },
                     text_bounds.position(),
                     style.placeholder,

@@ -56,9 +56,9 @@
 //!     column![a, b, c, all].into()
 //! }
 //! ```
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
 use crate::core::border::{self, Border};
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::renderer;
@@ -68,9 +68,8 @@ use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Color, Element, Event, Layout, Length, Pixels,
-    Rectangle, Shell, Size, Theme,
-    Widget,
+    Background, Color, Element, Event, Layout, Length, Pixels, Rectangle,
+    Shell, Size, Theme, Widget,
 };
 
 /// A circular button representing a choice.
@@ -342,7 +341,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

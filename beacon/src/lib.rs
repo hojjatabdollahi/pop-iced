@@ -184,7 +184,7 @@ pub fn run() -> impl Stream<Item = Event> {
                                     .await;
                             }
                             client::Message::EventLogged { at, event } => {
-                                 match event {
+                                match event {
                                     client::Event::ThemeChanged(seed) => {
                                         let _ = output
                                             .send(Event::ThemeChanged {

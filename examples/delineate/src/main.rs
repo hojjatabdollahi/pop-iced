@@ -41,8 +41,10 @@ impl Example {
                 Task::none()
             }
             Message::Scrolled | Message::WindowResized => Task::batch(vec![
-                selector::find(OUTER_CONTAINER.clone()).map(Message::OuterFound),
-                selector::find(INNER_CONTAINER.clone()).map(Message::InnerFound),
+                selector::find(OUTER_CONTAINER.clone())
+                    .map(Message::OuterFound),
+                selector::find(INNER_CONTAINER.clone())
+                    .map(Message::InnerFound),
             ]),
             Message::OuterFound(outer) => {
                 self.outer_bounds =

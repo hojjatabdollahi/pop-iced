@@ -72,9 +72,7 @@ impl Stopwatch {
             };
 
             match modified_key.as_ref() {
-                keyboard::Key::Character(" ") => {
-                    Some(Message::Toggle)
-                }
+                keyboard::Key::Character(" ") => Some(Message::Toggle),
                 keyboard::Key::Character("r") => Some(Message::Reset),
                 _ => None,
             }

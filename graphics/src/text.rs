@@ -108,7 +108,7 @@ impl Text {
                     alignment::Vertical::Bottom => {
                         bounds.y -= bounds.height;
                     }
-                    _ => {}
+                    alignment::Vertical::Top => {}
                 };
                 bounds.intersection(clip_bounds)
             }

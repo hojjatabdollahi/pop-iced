@@ -2,8 +2,8 @@ use iced::mouse;
 use iced::widget::{canvas, column, container, row, slider, text};
 use iced::window;
 use iced::{
-    Center, Element, Event, Fill, Font, Point, Rectangle, Renderer, Size, Subscription, Theme,
-    Vector,
+    Center, Element, Event, Fill, Font, Point, Rectangle, Renderer, Size,
+    Subscription, Theme, Vector,
 };
 
 use std::collections::{HashMap, HashSet};
@@ -32,16 +32,14 @@ impl Sandpiles {
     fn new() -> Self {
         Self {
             grid: Grid::new(),
-            sandfalls: HashSet::from_iter(
-                std::iter::once(Cell::ORIGIN).chain(
-                    [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-                        .iter()
-                        .map(|(i, j)| Cell {
-                            row: 3 * i,
-                            column: 3 * j,
-                        }),
-                ),
-            ),
+            sandfalls: HashSet::from_iter(std::iter::once(Cell::ORIGIN).chain(
+                [(-1, -1), (-1, 1), (1, -1), (1, 1)].iter().map(|(i, j)| {
+                    Cell {
+                        row: 3 * i,
+                        column: 3 * j,
+                    }
+                }),
+            )),
             cache: canvas::Cache::new(),
             speed: 1,
         }
@@ -190,13 +188,19 @@ impl canvas::Program<Message> for Viewer<'_> {
     ) -> Option<canvas::Action<Message>> {
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
-                let position = cursor.position_in(bounds)? - (bounds.center() - Point::ORIGIN);
+                let position = cursor.position_in(bounds)?
+                    - (bounds.center() - Point::ORIGIN);
                 let row = (position.x / Self::CELL_SIZE).round() as isize;
                 let column = (position.y / Self::CELL_SIZE).round() as isize;
 
-                Some(canvas::Action::publish(Message::Add(Cell { row, column })))
+                Some(canvas::Action::publish(Message::Add(Cell {
+                    row,
+                    column,
+                })))
             }
-            Event::Mouse(mouse::Event::CursorMoved { .. }) if cursor.is_over(bounds) => {
+            Event::Mouse(mouse::Event::CursorMoved { .. })
+                if cursor.is_over(bounds) =>
+            {
                 Some(canvas::Action::request_redraw())
             }
             _ => None,
@@ -263,11 +267,16 @@ impl canvas::Program<Message> for Viewer<'_> {
                 let translation = frame.center() - Point::ORIGIN;
                 let position = position - translation;
 
-                frame.translate(translation - Vector::new(Self::CELL_SIZE, Self::CELL_SIZE) / 2.0);
+                frame.translate(
+                    translation
+                        - Vector::new(Self::CELL_SIZE, Self::CELL_SIZE) / 2.0,
+                );
                 frame.fill_rectangle(
                     Point::new(
-                        (position.x / Self::CELL_SIZE).round() * Self::CELL_SIZE,
-                        (position.y / Self::CELL_SIZE).round() * Self::CELL_SIZE,
+                        (position.x / Self::CELL_SIZE).round()
+                            * Self::CELL_SIZE,
+                        (position.y / Self::CELL_SIZE).round()
+                            * Self::CELL_SIZE,
                     ),
                     Size::new(Self::CELL_SIZE, Self::CELL_SIZE),
                     theme.seed().primary,

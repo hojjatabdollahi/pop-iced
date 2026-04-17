@@ -155,7 +155,8 @@ impl Engine {
             }
         }
 
-        let clip_mask = clip_mask.filter(|_| !physical_bounds.is_within(&clip_bounds));
+        let clip_mask =
+            clip_mask.filter(|_| !physical_bounds.is_within(&clip_bounds));
 
         pixels.fill_path(
             &path,
@@ -571,7 +572,9 @@ impl Engine {
             } => {
                 let physical_bounds = *local_clip_bounds * _transformation;
 
-                let Some(clip_bounds) = physical_bounds.intersection(&_clip_bounds) else {
+                let Some(clip_bounds) =
+                    physical_bounds.intersection(&_clip_bounds)
+                else {
                     return;
                 };
 

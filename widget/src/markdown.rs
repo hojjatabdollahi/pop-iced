@@ -1408,7 +1408,9 @@ where
             text!("{}.", i as u64 + start)
                 .size(settings.text_size)
                 .align_x(alignment::Horizontal::Right)
-                .width(settings.text_size * ((digits as f32 / 2.0).ceil() + 1.0)),
+                .width(
+                    settings.text_size * ((digits as f32 / 2.0).ceil() + 1.0)
+                ),
             view_with(
                 bullet.items(),
                 Settings {

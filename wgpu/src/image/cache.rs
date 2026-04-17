@@ -38,7 +38,10 @@ impl Cache {
             raster: Raster {
                 cache: crate::image::raster::Cache::default(),
                 pending: HashMap::new(),
-                belt: wgpu::util::StagingBelt::new(device.clone(), 2 * 1024 * 1024),
+                belt: wgpu::util::StagingBelt::new(
+                    device.clone(),
+                    2 * 1024 * 1024,
+                ),
             },
             #[cfg(feature = "svg")]
             vector: crate::image::vector::Cache::default(),
@@ -441,7 +444,10 @@ mod worker {
                 backend,
                 texture_layout,
                 shell: shell.clone(),
-                belt: wgpu::util::StagingBelt::new(device.clone(), 4 * 1024 * 1024),
+                belt: wgpu::util::StagingBelt::new(
+                    device.clone(),
+                    4 * 1024 * 1024,
+                ),
                 jobs: jobs_receiver,
                 output: work_sender,
                 quit: quit_receiver,
@@ -543,26 +549,23 @@ mod worker {
                     Job::Load {
                         handle,
                         is_allocation,
-                    } => {
-                         match crate::graphics::image::load(&handle) {
-                            Ok(image) => self.upload(
-                                handle,
-                                image.width(),
-                                image.height(),
-                                image.into_raw(),
-                                if is_allocation {
-                                    Shell::tick
-                                } else {
-                                    Shell::invalidate_layout
-                                },
-                            ),
-                            Err(error) => {
-                                let _ = self
-                                    .output
-                                    .send(Work::Error { handle, error });
-                            }
+                    } => match crate::graphics::image::load(&handle) {
+                        Ok(image) => self.upload(
+                            handle,
+                            image.width(),
+                            image.height(),
+                            image.into_raw(),
+                            if is_allocation {
+                                Shell::tick
+                            } else {
+                                Shell::invalidate_layout
+                            },
+                        ),
+                        Err(error) => {
+                            let _ =
+                                self.output.send(Work::Error { handle, error });
                         }
-                    }
+                    },
                     Job::Upload {
                         handle,
                         rgba,

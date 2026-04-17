@@ -34,8 +34,10 @@ use crate::core::text;
 use crate::core::time::{Duration, Instant};
 use crate::core::widget::{self, Widget};
 use crate::core::window;
-use crate::core::{Element, Event, Length, Padding, Pixels, Point, Rectangle,
-    Shell, Size, Vector};
+use crate::core::{
+    Element, Event, Length, Padding, Pixels, Point, Rectangle, Shell, Size,
+    Vector,
+};
 
 /// An element to display a widget over another.
 ///

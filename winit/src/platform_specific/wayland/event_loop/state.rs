@@ -1469,7 +1469,7 @@ impl SctkState {
                     // TODO how to handle this when there's no lock?
                     if let Some((surface, _)) = self.get_lock_surface(id, &output) {
                         let wl_surface = surface.wl_surface();
-                        
+
                         receive_frame(&mut self.frame_status, &wl_surface);
                     }
                 }
@@ -1653,7 +1653,7 @@ impl SctkState {
                     bg_effect_mgr.enqueue(id, rectangles.clone());
                     return Ok(());
                 }
-                
+
                 let s = if let Some(s) = self.popups.iter().find(|s| s.data.id == id) {
                     s.popup.wl_surface()
                 } else if let Some(s) = self.layer_surfaces.iter().find(|s| s.id == id) {

@@ -26,9 +26,8 @@ use crate::core::svg;
 use crate::core::widget::Tree;
 use crate::core::window;
 use crate::core::{
-    Color, ContentFit, Element, Event, Layout, Length, Point,
-    Rectangle, Rotation, Shell, Size,
-    Theme, Vector, Widget,
+    Color, ContentFit, Element, Event, Layout, Length, Point, Rectangle,
+    Rotation, Shell, Size, Theme, Vector, Widget,
 };
 
 #[cfg(feature = "a11y")]

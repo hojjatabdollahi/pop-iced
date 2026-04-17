@@ -56,9 +56,9 @@ impl Locker {
                 WaylandEvent::SessionLock(evt) => match evt {
                     SessionLockEvent::Locked => {
                         return iced::Task::perform(
-                            tokio::time::sleep(
-                                std::time::Duration::from_secs(5),
-                            ),
+                            tokio::time::sleep(std::time::Duration::from_secs(
+                                5,
+                            )),
                             |_| Message::TimeUp,
                         );
                     }

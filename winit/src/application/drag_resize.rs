@@ -25,7 +25,7 @@ const DRAG_RESIZE_SUPPORTED: bool = false;
 
 /// If supported by winit, returns a closure that implements cursor resize support.
 pub fn event_func(
-    window: &dyn winit::window::Window,
+    _window: &dyn winit::window::Window,
     border_size: f64,
 ) -> Option<
     Box<
@@ -48,21 +48,18 @@ pub fn event_func(
                     winit::event::WindowEvent::PointerMoved {
                         position,
                         ..
-                    } => {
-                        if !window.is_decorated() {
-                            let location = cursor_resize_direction(
-                                window.surface_size(),
-                                *position,
-                                border_size,
+                    } if !window.is_decorated() => {
+                        let location = cursor_resize_direction(
+                            window.surface_size(),
+                            *position,
+                            border_size,
+                        );
+                        if location != cursor_prev_resize_direction {
+                            window.set_cursor(
+                                resize_direction_cursor_icon(location).into(),
                             );
-                            if location != cursor_prev_resize_direction {
-                                window.set_cursor(
-                                    resize_direction_cursor_icon(location)
-                                        .into(),
-                                );
-                                cursor_prev_resize_direction = location;
-                                return true;
-                            }
+                            cursor_prev_resize_direction = location;
+                            return true;
                         }
                     }
                     winit::event::WindowEvent::PointerButton {

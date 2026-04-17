@@ -63,8 +63,8 @@
 //! ```
 //! Display a dropdown list of selectable values.
 
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
+use crate::core::clipboard::Clipboard;
 use crate::core::keyboard;
 use crate::core::layout;
 use crate::core::mouse;
@@ -76,8 +76,8 @@ use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Border, Color, Element, Event, Layout, Length, Padding, Pixels, Point, Rectangle,
-    Shell, Size, Theme, Vector, Widget,
+    Background, Border, Color, Element, Event, Layout, Length, Padding, Pixels,
+    Point, Rectangle, Shell, Size, Theme, Vector, Widget,
 };
 use crate::overlay::menu::{self, Menu};
 
@@ -196,7 +196,9 @@ where
 {
     /// Creates a new [`PickList`] with the given list of options, the current
     /// selected value, and the message to produce when an option is selected.
-    pub fn new(selected: Option<V>, options: L,
+    pub fn new(
+        selected: Option<V>,
+        options: L,
         to_string: impl Fn(&T) -> String + 'a,
     ) -> Self {
         Self {
@@ -416,7 +418,8 @@ where
             Length::Shrink => {
                 state.options.resize_with(options.len(), Default::default);
 
-                for (option, paragraph) in options.iter().zip(state.options.iter_mut())
+                for (option, paragraph) in
+                    options.iter().zip(state.options.iter_mut())
                 {
                     let label = (self.to_string)(option);
 
@@ -464,7 +467,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
@@ -708,7 +711,7 @@ where
                     align_y: alignment::Vertical::Center,
                     shaping,
                     wrapping: wrap,
-                    ellipsize: ellipsize,
+                    ellipsize,
                     hint_factor: None,
                 },
                 Point::new(

@@ -1,12 +1,12 @@
 //! Interact with the popups of your application.
 use crate::core::window::Id as SurfaceId;
 use iced_runtime::{
-    self,
+    self, Action, Task,
     platform_specific::{
         self,
         wayland::{self, popup::SctkPopupSettings},
     },
-    task, Action, Task,
+    task,
 };
 
 /// <https://wayland.app/protocols/wlr-layer-shell-unstable-v1#zwlr_layer_surface_v1:request:get_popup>

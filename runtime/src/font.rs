@@ -62,7 +62,10 @@ pub fn list() -> Task<Result<Vec<Family>, Error>> {
 }
 
 /// Sets a new default [`Font`] and text size for the running application.
-pub fn set_defaults<Message>(font: Font, text_size: impl Into<Pixels>) -> Task<Message> {
+pub fn set_defaults<Message>(
+    font: Font,
+    text_size: impl Into<Pixels>,
+) -> Task<Message> {
     task::effect(crate::Action::Font(Action::SetDefaults {
         font,
         text_size: text_size.into(),

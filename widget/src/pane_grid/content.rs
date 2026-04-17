@@ -6,8 +6,7 @@ use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::{self, Tree};
 use crate::core::{
-    self, Element, Event, Layout, Point, Rectangle, Shell, Size,
-    Vector, event,
+    self, Element, Event, Layout, Point, Rectangle, Shell, Size, Vector,
 };
 use crate::pane_grid::{Draggable, TitleBar};
 

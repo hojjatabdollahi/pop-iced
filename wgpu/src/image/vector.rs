@@ -170,9 +170,14 @@ impl Cache {
                     });
                 }
 
-                let allocation =
-                    atlas
-                        .upload(device, encoder, belt, size.width, size.height, &rgba)?;
+                let allocation = atlas.upload(
+                    device,
+                    encoder,
+                    belt,
+                    size.width,
+                    size.height,
+                    &rgba,
+                )?;
 
                 log::debug!("allocating {id} {}x{}", size.width, size.height);
 

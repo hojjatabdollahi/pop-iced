@@ -3,15 +3,16 @@
 use iced_renderer::core::mouse::Click;
 
 use crate::core::clipboard::Clipboard;
-use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::touch;
 use crate::core::widget::{Operation, Tree, tree};
-use crate::core::{Element, Event, Layout, Length, Point, Rectangle, Shell, Size,
-    Vector, Widget};
+use crate::core::{
+    Element, Event, Layout, Length, Point, Rectangle, Shell, Size, Vector,
+    Widget,
+};
 
 /// Emit messages on mouse events.
 pub struct MouseArea<
@@ -449,14 +450,13 @@ fn update<Message: Clone, Theme, Renderer>(
                 .as_ref()
                 .or(widget.on_exit.as_ref())
                 .is_some()
+            && let Event::Mouse(mouse::Event::CursorMoved { .. }) = event
         {
-            if let Event::Mouse(mouse::Event::CursorMoved { .. }) = event {
-                state.is_out_of_bounds = true;
-                if let Some(message) = widget.on_exit.as_ref() {
-                    shell.publish(message.clone());
-                }
-                return;
+            state.is_out_of_bounds = true;
+            if let Some(message) = widget.on_exit.as_ref() {
+                shell.publish(message.clone());
             }
+            return;
         }
 
         return;
@@ -464,31 +464,27 @@ fn update<Message: Clone, Theme, Renderer>(
 
     if let Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left))
     | Event::Touch(touch::Event::FingerPressed { .. }) = event
+        && let Some(position) = cursor_position
     {
-        if let Some(position) = cursor_position {
-            let new_click = mouse::Click::new(
-                position,
-                mouse::Button::Left,
-                state.last_press,
-            );
-            if new_click.kind() == mouse::click::Kind::Double
-                && let Some(double_press) = widget.on_double_press.as_ref()
-            {
-                state.drag_initiated = None;
-                shell.publish(double_press.clone());
-                shell.capture_event();
-                state.last_press = Some(new_click);
-                return;
-            } else if let Some(on_press_message) = widget.on_press.as_ref() {
-                shell.publish(on_press_message.clone());
-            }
-
-            state.last_press = Some(new_click);
-
-            // Even if this is not a double click, but the press is nevertheless
-            // processed by us and should not be popup to parent widgets.
+        let new_click =
+            mouse::Click::new(position, mouse::Button::Left, state.last_press);
+        if new_click.kind() == mouse::click::Kind::Double
+            && let Some(double_press) = widget.on_double_press.as_ref()
+        {
+            state.drag_initiated = None;
+            shell.publish(double_press.clone());
             shell.capture_event();
+            state.last_press = Some(new_click);
+            return;
+        } else if let Some(on_press_message) = widget.on_press.as_ref() {
+            shell.publish(on_press_message.clone());
         }
+
+        state.last_press = Some(new_click);
+
+        // Even if this is not a double click, but the press is nevertheless
+        // processed by us and should not be popup to parent widgets.
+        shell.capture_event();
     }
 
     if let Event::Mouse(mouse::Event::ButtonReleased(mouse::Button::Left))
@@ -551,28 +547,26 @@ fn update<Message: Clone, Theme, Renderer>(
         _ => {}
     };
 
-    if let Some(on_scroll) = widget.on_scroll.as_ref() {
-        if let Event::Mouse(mouse::Event::WheelScrolled { delta }) = event {
-            shell.publish(on_scroll(*delta));
-            shell.capture_event();
+    if let Some(on_scroll) = widget.on_scroll.as_ref()
+        && let Event::Mouse(mouse::Event::WheelScrolled { delta }) = event
+    {
+        shell.publish(on_scroll(*delta));
+        shell.capture_event();
 
-            return;
-        }
+        return;
     }
 
     if let Some(message) = widget.on_enter.as_ref().or(widget.on_exit.as_ref())
+        && let Event::Mouse(mouse::Event::CursorMoved { .. }) = event
+        && state.is_out_of_bounds
     {
-        if let Event::Mouse(mouse::Event::CursorMoved { .. }) = event {
-            if state.is_out_of_bounds {
-                state.is_out_of_bounds = false;
-                if widget.on_enter.is_some() {
-                    shell.publish(message.clone());
-                }
-                shell.capture_event();
-
-                return;
-            }
+        state.is_out_of_bounds = false;
+        if widget.on_enter.is_some() {
+            shell.publish(message.clone());
         }
+        shell.capture_event();
+
+        return;
     }
 
     if state.drag_initiated.is_none() && widget.on_drag.is_some() {
@@ -583,14 +577,10 @@ fn update<Message: Clone, Theme, Renderer>(
         }
     } else if let Some((message, drag_source)) =
         widget.on_drag.as_ref().zip(state.drag_initiated)
+        && let Some(position) = cursor.position()
+        && position.distance(drag_source) > 1.0
     {
-        if let Some(position) = cursor.position() {
-            if position.distance(drag_source) > 1.0 {
-                state.drag_initiated = None;
-                shell.publish(message.clone());
-
-                return;
-            }
-        }
+        state.drag_initiated = None;
+        shell.publish(message.clone());
     }
 }

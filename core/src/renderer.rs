@@ -148,7 +148,10 @@ impl Default for Style {
 /// a window nor a compositor.
 pub trait Headless {
     /// Creates a new [`Headless`] renderer;
-    fn new(settings: Settings, backend: Option<&str>) -> impl Future<Output = Option<Self>>
+    fn new(
+        settings: Settings,
+        backend: Option<&str>,
+    ) -> impl Future<Output = Option<Self>>
     where
         Self: Sized;
 

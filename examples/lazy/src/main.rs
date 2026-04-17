@@ -175,7 +175,9 @@ impl App {
                     text(item.name.clone()).color(item.color),
                     space::horizontal(),
                     pick_list(Some(item.color), Color::ALL, Color::to_string)
-                        .on_select(move |color| { Message::ItemColorChanged(item.clone(), color) }),
+                        .on_select(move |color| {
+                            Message::ItemColorChanged(item.clone(), color)
+                        }),
                     button
                 ]
                 .spacing(20)

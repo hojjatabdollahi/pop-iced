@@ -229,13 +229,19 @@ impl Layer {
             &previous.quads,
             &current.quads,
             |(quad, _)| {
-                let Some(bounds) = quad.bounds.expand(1.0).intersection(&layer_bounds) else {
+                let Some(bounds) =
+                    quad.bounds.expand(1.0).intersection(&layer_bounds)
+                else {
                     return vec![];
                 };
 
                 vec![if quad.shadow.color.a > 0.0 {
                     bounds.expand(
-                        quad.shadow.offset.x.abs().max(quad.shadow.offset.y.abs())
+                        quad.shadow
+                            .offset
+                            .x
+                            .abs()
+                            .max(quad.shadow.offset.y.abs())
                             + quad.shadow.blur_radius,
                     )
                 } else {

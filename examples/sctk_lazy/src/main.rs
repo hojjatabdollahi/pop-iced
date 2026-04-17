@@ -200,11 +200,8 @@ impl App {
                 row![
                     text(item.name.clone()),
                     space().width(Length::Fill),
-                    pick_list(
-                        Some(item.color),
-                        Color::ALL,
-                        |c: &Color| c.to_string(),
-                    )
+                    pick_list(Some(item.color), Color::ALL, |c: &Color| c
+                        .to_string(),)
                     .on_select(move |color| {
                         Message::ItemColorChanged(item.clone(), color)
                     }),

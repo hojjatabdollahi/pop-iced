@@ -255,14 +255,13 @@ impl Compositor {
 
                 log::info!("Available alpha modes: {alpha_modes:#?}");
 
-                let preferred_alpha =
-                    if alpha_modes
-                        .contains(&wgpu::CompositeAlphaMode::PreMultiplied)
-                    {
-                        wgpu::CompositeAlphaMode::PreMultiplied
-                    } else {
-                        wgpu::CompositeAlphaMode::Auto
-                    };
+                let preferred_alpha = if alpha_modes
+                    .contains(&wgpu::CompositeAlphaMode::PreMultiplied)
+                {
+                    wgpu::CompositeAlphaMode::PreMultiplied
+                } else {
+                    wgpu::CompositeAlphaMode::Auto
+                };
 
                 format.zip(Some(preferred_alpha))
             })
@@ -287,11 +286,12 @@ impl Compositor {
         });
 
         // Request SHADER_F16 only if the adapter supports it (e.g., not available in WebGL2)
-        let required_features = if adapter.features().contains(wgpu::Features::SHADER_F16) {
-            wgpu::Features::SHADER_F16
-        } else {
-            wgpu::Features::empty()
-        };
+        let required_features =
+            if adapter.features().contains(wgpu::Features::SHADER_F16) {
+                wgpu::Features::SHADER_F16
+            } else {
+                wgpu::Features::empty()
+            };
 
         let mut errors = Vec::new();
 

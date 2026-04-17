@@ -119,7 +119,8 @@ impl Family {
         use rustc_hash::FxHashSet;
         use std::sync::{LazyLock, Mutex};
 
-        static NAMES: LazyLock<Mutex<FxHashSet<&'static str>>> = LazyLock::new(Mutex::default);
+        static NAMES: LazyLock<Mutex<FxHashSet<&'static str>>> =
+            LazyLock::new(Mutex::default);
 
         let mut names = NAMES.lock().expect("lock font name cache");
 

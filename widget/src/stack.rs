@@ -1,14 +1,14 @@
 //! Display content on top of other content.
 
 use crate::core::clipboard::Clipboard;
-use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::{Operation, Tree};
-use crate::core::{Element, Event, Layout, Length, Rectangle, Shell, Size, Vector,
-    Widget};
+use crate::core::{
+    Element, Event, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
+};
 
 /// A container that displays children on top of each other.
 ///
@@ -255,10 +255,10 @@ where
             .zip(layout.children().rev())
             .enumerate()
         {
-            child
-                .as_widget_mut()
-                .update(tree, event, layout, cursor, renderer, clipboard, shell,
-                viewport);
+            child.as_widget_mut().update(
+                tree, event, layout, cursor, renderer, clipboard, shell,
+                viewport,
+            );
 
             if shell.is_event_captured() {
                 return;

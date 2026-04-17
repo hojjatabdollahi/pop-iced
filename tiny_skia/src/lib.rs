@@ -441,11 +441,13 @@ impl compositor::Default for Renderer {
 }
 
 impl renderer::Headless for Renderer {
-    async fn new(settings: renderer::Settings, backend: Option<&str>) -> Option<Self> {
+    async fn new(
+        settings: renderer::Settings,
+        backend: Option<&str>,
+    ) -> Option<Self> {
         if backend.is_some_and(|backend| {
             !["tiny-skia", "tiny_skia", "software"].contains(&backend)
-        })
-        {
+        }) {
             return None;
         }
 

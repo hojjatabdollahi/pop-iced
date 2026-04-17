@@ -35,8 +35,6 @@ iced_renderer.workspace = true
 iced_runtime.workspace = true
 iced_accessibility.workspace = true
 iced_accessibility.optional = true
-cctk.workspace = true
-cctk.optional = true
 num-traits.workspace = true
 log.workspace = true
 rustc-hash.workspace = true
@@ -56,3 +54,7 @@ pulldown-cmark.optional = true
 
 iced_highlighter.workspace = true
 iced_highlighter.optional = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+cctk.workspace = true
+cctk.optional = true

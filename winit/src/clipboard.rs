@@ -1,7 +1,7 @@
 //! Access the clipboard.
 
+use std::borrow::Cow;
 use std::sync::Mutex;
-use std::{any::Any, borrow::Cow};
 
 use crate::Control;
 
@@ -184,11 +184,11 @@ impl Clipboard {
     ) -> Option<(Vec<u8>, String)> {
         match (&self.state, kind) {
             (State::Connected { clipboard, .. }, Kind::Standard) => {
-                clipboard.read_raw(mimes).and_then(|res| res.ok())
+                clipboard.read_raw(mimes).and_then(std::result::Result::ok)
             }
-            (State::Connected { clipboard, .. }, Kind::Primary) => {
-                clipboard.read_primary_raw(mimes).and_then(|res| res.ok())
-            }
+            (State::Connected { clipboard, .. }, Kind::Primary) => clipboard
+                .read_primary_raw(mimes)
+                .and_then(std::result::Result::ok),
             (State::Unavailable, _) => None,
         }
     }
@@ -202,10 +202,10 @@ impl Clipboard {
     ) {
         match (&mut self.state, kind) {
             (State::Connected { clipboard, .. }, Kind::Standard) => {
-                _ = clipboard.write_data(contents)
+                _ = clipboard.write_data(contents);
             }
             (State::Connected { clipboard, .. }, Kind::Primary) => {
-                _ = clipboard.write_primary_data(contents)
+                _ = clipboard.write_primary_data(contents);
             }
             (State::Unavailable, _) => {}
         }
@@ -269,7 +269,7 @@ impl Clipboard {
                         rect.preferred
                     );
                 }
-                _ = clipboard.register_dnd_destination(surface, rectangles)
+                clipboard.register_dnd_destination(surface, rectangles);
             }
             State::Unavailable => {}
         }
@@ -277,7 +277,7 @@ impl Clipboard {
 
     pub fn end_dnd(&self) {
         match &self.state {
-            State::Connected { clipboard, .. } => _ = clipboard.end_dnd(),
+            State::Connected { clipboard, .. } => clipboard.end_dnd(),
             State::Unavailable => {}
         }
     }
@@ -295,7 +295,7 @@ impl Clipboard {
     pub fn set_action(&self, action: DndAction) {
         match &self.state {
             State::Connected { clipboard, .. } => {
-                _ = clipboard.set_action(action)
+                clipboard.set_action(action);
             }
             State::Unavailable => {}
         }
@@ -316,13 +316,13 @@ impl Clipboard {
     ) {
         match &self.state {
             State::Connected { clipboard, .. } => {
-                _ = clipboard.start_dnd(
+                clipboard.start_dnd(
                     internal,
                     source_surface,
                     icon_surface,
                     content,
                     actions,
-                )
+                );
             }
             State::Unavailable => {}
         }
@@ -336,7 +336,7 @@ impl crate::core::Clipboard for Clipboard {
                 clipboard.read().ok()
             }
             (State::Connected { clipboard, .. }, Kind::Primary) => {
-                clipboard.read_primary().and_then(|res| res.ok())
+                clipboard.read_primary().and_then(std::result::Result::ok)
             }
             (State::Unavailable, _) => None,
         }
@@ -345,10 +345,10 @@ impl crate::core::Clipboard for Clipboard {
     fn write(&mut self, kind: Kind, contents: String) {
         match (&mut self.state, kind) {
             (State::Connected { clipboard, .. }, Kind::Standard) => {
-                _ = clipboard.write(contents)
+                _ = clipboard.write(contents);
             }
             (State::Connected { clipboard, .. }, Kind::Primary) => {
-                _ = clipboard.write_primary(contents)
+                _ = clipboard.write_primary(contents);
             }
             (State::Unavailable, _) => {}
         }
@@ -361,11 +361,11 @@ impl crate::core::Clipboard for Clipboard {
     ) -> Option<(Vec<u8>, String)> {
         match (&self.state, kind) {
             (State::Connected { clipboard, .. }, Kind::Standard) => {
-                clipboard.read_raw(mimes).and_then(|res| res.ok())
+                clipboard.read_raw(mimes).and_then(std::result::Result::ok)
             }
-            (State::Connected { clipboard, .. }, Kind::Primary) => {
-                clipboard.read_primary_raw(mimes).and_then(|res| res.ok())
-            }
+            (State::Connected { clipboard, .. }, Kind::Primary) => clipboard
+                .read_primary_raw(mimes)
+                .and_then(std::result::Result::ok),
             (State::Unavailable, _) => None,
         }
     }
@@ -379,10 +379,10 @@ impl crate::core::Clipboard for Clipboard {
     ) {
         match (&mut self.state, kind) {
             (State::Connected { clipboard, .. }, Kind::Standard) => {
-                _ = clipboard.write_data(contents)
+                _ = clipboard.write_data(contents);
             }
             (State::Connected { clipboard, .. }, Kind::Primary) => {
-                _ = clipboard.write_primary_data(contents)
+                _ = clipboard.write_primary_data(contents);
             }
             (State::Unavailable, _) => {}
         }
@@ -447,7 +447,7 @@ impl crate::core::Clipboard for Clipboard {
                         rect.preferred
                     );
                 }
-                _ = clipboard.register_dnd_destination(surface, rectangles)
+                clipboard.register_dnd_destination(surface, rectangles);
             }
             State::Unavailable => {}
         }
@@ -455,7 +455,7 @@ impl crate::core::Clipboard for Clipboard {
 
     fn end_dnd(&self) {
         match &self.state {
-            State::Connected { clipboard, .. } => _ = clipboard.end_dnd(),
+            State::Connected { clipboard, .. } => clipboard.end_dnd(),
             State::Unavailable => {}
         }
     }
@@ -473,7 +473,7 @@ impl crate::core::Clipboard for Clipboard {
     fn set_action(&self, action: DndAction) {
         match &self.state {
             State::Connected { clipboard, .. } => {
-                _ = clipboard.set_action(action)
+                clipboard.set_action(action);
             }
             State::Unavailable => {}
         }

@@ -1,7 +1,7 @@
 //! Make elements float!
 use crate::core;
-use crate::core::clipboard::Clipboard;
 use crate::core::border;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -139,9 +139,9 @@ where
             return;
         }
 
-        self.content
-            .as_widget_mut()
-            .update(tree, event, layout, cursor, renderer, clipboard, shell, viewport);
+        self.content.as_widget_mut().update(
+            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
+        );
     }
 
     fn draw(

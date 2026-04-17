@@ -41,9 +41,7 @@ impl crate::graphics::Compositor for Compositor {
         backend: Option<&str>,
     ) -> Result<Self, Error> {
         match backend {
-            None | Some("tiny-skia") | Some("tiny_skia") => {
-                Ok(new(display))
-            }
+            None | Some("tiny-skia") | Some("tiny_skia") => Ok(new(display)),
             Some(backend) => Err(Error::GraphicsAdapterNotFound {
                 backend: "tiny-skia",
                 reason: error::Reason::DidNotMatch {
@@ -136,8 +134,7 @@ impl crate::graphics::Compositor for Compositor {
     }
 }
 
-pub fn new(display: impl compositor::Display,
-) -> Compositor {
+pub fn new(display: impl compositor::Display) -> Compositor {
     #[allow(unsafe_code)]
     let context = softbuffer::Context::new(Box::new(display) as _)
         .expect("Create softbuffer context");

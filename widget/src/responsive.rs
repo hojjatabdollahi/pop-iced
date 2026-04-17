@@ -5,8 +5,9 @@ use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget;
 use crate::core::widget::Tree;
-use crate::core::{self, Element, Event, Length, Rectangle, Shell, Size, Vector,
-    Widget};
+use crate::core::{
+    self, Element, Event, Length, Rectangle, Shell, Size, Vector, Widget,
+};
 use crate::space;
 
 /// A widget that is aware of its dimensions.

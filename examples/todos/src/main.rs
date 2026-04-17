@@ -5,8 +5,8 @@ use iced::widget::{
 };
 use iced::window;
 use iced::{
-    Center, Element, Fill, Function, Preset, Program, Subscription, Task as Command,
-    Theme, application::Application,
+    Center, Element, Fill, Function, Preset, Program, Subscription,
+    Task as Command, Theme, application::Application,
 };
 
 use serde::{Deserialize, Serialize};

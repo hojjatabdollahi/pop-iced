@@ -2,7 +2,6 @@
 //! Distribute content vertically.
 
 use crate::core::clipboard::Clipboard;
-use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -10,9 +9,8 @@ use crate::core::renderer;
 use crate::core::widget::Operation;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    Alignment, Element, Event, Layout, Length, Padding, Pixels,
-    Rectangle, Shell, Size, Vector,
-    Widget,
+    Alignment, Element, Event, Layout, Length, Padding, Pixels, Rectangle,
+    Shell, Size, Vector, Widget,
 };
 
 /// A container that distributes its contents vertically while keeping continuity.
@@ -295,9 +293,12 @@ where
                 .zip(&mut tree.children)
                 .zip(layout.children())
                 .for_each(|((child, state), c_layout)| {
-                    child
-                        .as_widget_mut()
-                        .operate(state, c_layout.with_virtual_offset(layout.virtual_offset()), renderer, operation);
+                    child.as_widget_mut().operate(
+                        state,
+                        c_layout.with_virtual_offset(layout.virtual_offset()),
+                        renderer,
+                        operation,
+                    );
                 });
         });
     }
@@ -319,10 +320,16 @@ where
             .zip(&mut tree.children)
             .zip(layout.children())
         {
-            child
-                .as_widget_mut()
-                .update(tree, event, c_layout.with_virtual_offset(layout.virtual_offset()), cursor, renderer, clipboard, shell,
-                viewport);
+            child.as_widget_mut().update(
+                tree,
+                event,
+                c_layout.with_virtual_offset(layout.virtual_offset()),
+                cursor,
+                renderer,
+                clipboard,
+                shell,
+                viewport,
+            );
         }
     }
 
@@ -339,9 +346,13 @@ where
             .zip(&tree.children)
             .zip(layout.children())
             .map(|((child, tree), c_layout)| {
-                child
-                    .as_widget()
-                    .mouse_interaction(tree, c_layout.with_virtual_offset(layout.virtual_offset()), cursor, viewport, renderer)
+                child.as_widget().mouse_interaction(
+                    tree,
+                    c_layout.with_virtual_offset(layout.virtual_offset()),
+                    cursor,
+                    viewport,
+                    renderer,
+                )
             })
             .max()
             .unwrap_or_default()

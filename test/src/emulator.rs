@@ -95,7 +95,10 @@ impl<P: Program + 'static> Emulator<P> {
         let executor = P::Executor::new().expect("Create emulator executor");
 
         let renderer = executor
-            .block_on(P::Renderer::new(renderer::Settings::from(&settings), None))
+            .block_on(P::Renderer::new(
+                renderer::Settings::from(&settings),
+                None,
+            ))
             .expect("Create emulator renderer");
 
         let runtime = Runtime::new(executor, sender);
@@ -214,24 +217,35 @@ impl<P: Program + 'static> Emulator<P> {
                         | window::Action::GetLatest(sender) => {
                             let _ = sender.send(Some(self.window));
                         }
-                        window::Action::GetSize(id, sender) if id == self.window => {
+                        window::Action::GetSize(id, sender)
+                            if id == self.window =>
+                        {
                             let _ = sender.send(self.size);
                         }
-                        window::Action::GetMaximized(id, sender) if id == self.window => {
+                        window::Action::GetMaximized(id, sender)
+                            if id == self.window =>
+                        {
                             let _ = sender.send(false);
                         }
-                        window::Action::GetMinimized(id, sender) if id == self.window => {
+                        window::Action::GetMinimized(id, sender)
+                            if id == self.window =>
+                        {
                             let _ = sender.send(None);
                         }
-                        window::Action::GetPosition(id, sender) if id == self.window => {
+                        window::Action::GetPosition(id, sender)
+                            if id == self.window =>
+                        {
                             let _ = sender.send(Some(Point::ORIGIN));
                         }
-                        window::Action::GetScaleFactor(id, sender) if id == self.window => {
+                        window::Action::GetScaleFactor(id, sender)
+                            if id == self.window =>
+                        {
                             let _ = sender.send(1.0);
                         }
-                        window::Action::GetMode(id, sender) if id == self.window => {
-                            let _ =
-                                sender.send(core::window::Mode::Windowed);
+                        window::Action::GetMode(id, sender)
+                            if id == self.window =>
+                        {
+                            let _ = sender.send(core::window::Mode::Windowed);
                         }
                         _ => {
                             // Ignored
@@ -289,7 +303,8 @@ impl<P: Program + 'static> Emulator<P> {
                     instruction::Target::Id(id) => {
                         use widget::Operation;
 
-                        let mut operation = Selector::find(widget::Id::from(id.to_owned()));
+                        let mut operation =
+                            Selector::find(widget::Id::from(id.to_owned()));
 
                         user_interface.operate(
                             &self.renderer,
@@ -336,8 +351,12 @@ impl<P: Program + 'static> Emulator<P> {
                     }
                 }
 
-                let (_state, _status) =
-                    user_interface.update(&events, self.cursor, &mut self.renderer, &mut messages);
+                let (_state, _status) = user_interface.update(
+                    &events,
+                    self.cursor,
+                    &mut self.renderer,
+                    &mut messages,
+                );
 
                 self.cache = Some(user_interface.into_cache());
 
@@ -366,7 +385,8 @@ impl<P: Program + 'static> Emulator<P> {
                             self.runtime.send(Event::Ready);
                         }
                         _ => {
-                            self.runtime.send(Event::Failed(instruction.clone()));
+                            self.runtime
+                                .send(Event::Failed(instruction.clone()));
                         }
                     }
 

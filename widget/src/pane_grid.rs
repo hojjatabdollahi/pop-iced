@@ -88,9 +88,8 @@ use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    self, Background, Border, Color, Element, Event, Layout, Length,
-    Pixels, Point, Rectangle,
-    Shell, Size, Theme, Vector, Widget,
+    self, Background, Border, Color, Element, Event, Layout, Length, Pixels,
+    Point, Rectangle, Shell, Size, Theme, Vector, Widget,
 };
 use log::trace;
 
@@ -407,7 +406,7 @@ where
             &mut self.contents,
             ids,
             |state, content: _| content.diff(state),
-            |content: _| content.state(),
+            content::Content::state,
         );
 
         let Memory { order, .. } = tree.state.downcast_mut();
@@ -786,8 +785,9 @@ where
         let resize_leeway = self.on_resize.as_ref().map(|(leeway, _)| *leeway);
 
         let picked_pane = action.picked_pane();
-        let dragged_pane = picked_pane
-            .filter(|(_, origin)| is_dragging(*origin, cursor.position().unwrap_or_default()));
+        let dragged_pane = picked_pane.filter(|(_, origin)| {
+            is_dragging(*origin, cursor.position().unwrap_or_default())
+        });
 
         let picked_split = action
             .picked_split()
@@ -884,7 +884,8 @@ where
                     if let Some(cursor_position) = cursor.position()
                         && dragged_pane.is_some()
                         && pane_in_edge.is_none()
-                        && let Some(region) = layout_region(pane_layout, cursor_position)
+                        && let Some(region) =
+                            layout_region(pane_layout, cursor_position)
                     {
                         let bounds = layout_region_bounds(pane_layout, region);
 
@@ -1003,7 +1004,8 @@ where
                     })));
                 }
 
-                content.overlay(tree,
+                content.overlay(
+                    tree,
                     c_layout.with_virtual_offset(layout.virtual_offset()),
                     renderer,
                     viewport,

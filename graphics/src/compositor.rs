@@ -69,7 +69,10 @@ pub trait Compositor: Sized {
     fn information(&self) -> Information;
 
     /// Loads a font from its bytes.
-    fn load_font(&mut self, font: Cow<'static, [u8]>) -> Result<(), font::Error> {
+    fn load_font(
+        &mut self,
+        font: Cow<'static, [u8]>,
+    ) -> Result<(), font::Error> {
         crate::text::font_system()
             .write()
             .expect("Write to font system")
@@ -235,7 +238,8 @@ impl Compositor for () {
         Ok(())
     }
 
-    fn create_renderer(&self, _settings: renderer::Settings) -> Self::Renderer {}
+    fn create_renderer(&self, _settings: renderer::Settings) -> Self::Renderer {
+    }
 
     fn create_surface<W: Window + Clone>(
         &mut self,
@@ -253,7 +257,10 @@ impl Compositor for () {
     ) {
     }
 
-    fn load_font(&mut self, _font: Cow<'static, [u8]>) -> Result<(), font::Error> {
+    fn load_font(
+        &mut self,
+        _font: Cow<'static, [u8]>,
+    ) -> Result<(), font::Error> {
         Ok(())
     }
 

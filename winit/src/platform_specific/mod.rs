@@ -1,14 +1,14 @@
 //! Wayland specific shell
 //!
 
-use std::{borrow::Cow, collections::HashMap, sync::Arc};
+use std::collections::HashMap;
 
 #[cfg(all(feature = "cctk", target_os = "linux"))]
 use cctk::sctk::reexports::client::Connection;
-use iced_graphics::{Compositor, compositor};
+use iced_graphics::compositor;
 use iced_runtime::{
     core::{Vector, window},
-    platform_specific, user_interface,
+    user_interface,
 };
 use winit::raw_window_handle::HasWindowHandle;
 
@@ -78,6 +78,10 @@ impl PlatformSpecific {
         }
     }
 
+    #[cfg_attr(
+        not(all(feature = "cctk", target_os = "linux")),
+        allow(unused_variables)
+    )]
     pub(crate) fn retain_subsurfaces<F: Fn(window::Id) -> bool>(
         &mut self,
         keep: F,
@@ -95,6 +99,10 @@ impl PlatformSpecific {
         }
     }
 
+    #[cfg_attr(
+        not(all(feature = "cctk", target_os = "linux")),
+        allow(unused_variables)
+    )]
     pub(crate) fn update_subsurfaces(
         &mut self,
         id: window::Id,
@@ -158,6 +166,10 @@ impl PlatformSpecific {
         None
     }
 
+    #[cfg_attr(
+        not(all(feature = "cctk", target_os = "linux")),
+        allow(unused_variables)
+    )]
     pub(crate) fn update_surface_shm(
         &mut self,
         surface: &dyn HasWindowHandle,
@@ -176,6 +188,11 @@ impl PlatformSpecific {
     }
 }
 
+#[allow(clippy::unused_async)]
+#[cfg_attr(
+    not(all(feature = "cctk", target_os = "linux")),
+    allow(unused_variables)
+)]
 pub(crate) async fn handle_event<'a, 'b, P>(
     e: Event,
     events: &mut Vec<(Option<window::Id>, iced_runtime::core::Event)>,

@@ -518,8 +518,12 @@ mod parser {
     use nom::branch::alt;
     use nom::bytes::complete::tag;
     use nom::bytes::{is_not, take_while_m_n};
-    use nom::character::complete::{alphanumeric1, char, multispace0, multispace1};
-    use nom::combinator::{map, map_opt, map_res, opt, recognize, success, value, verify};
+    use nom::character::complete::{
+        alphanumeric1, char, multispace0, multispace1,
+    };
+    use nom::combinator::{
+        map, map_opt, map_res, opt, recognize, success, value, verify,
+    };
     use nom::error::ParseError;
     use nom::multi::{fold, many1_count};
     use nom::number::float;

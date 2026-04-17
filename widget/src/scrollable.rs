@@ -27,7 +27,6 @@ use iced_runtime::core::widget::Id;
 #[cfg(feature = "a11y")]
 use std::borrow::Cow;
 
-use crate::core::event;
 use crate::core::keyboard;
 use crate::core::layout;
 use crate::core::mouse;
@@ -368,8 +367,7 @@ where
     #[cfg(feature = "a11y")]
     /// Sets the label of the [`Scrollable`].
     pub fn label(mut self, label: &dyn iced_accessibility::Labels) -> Self {
-        self.label =
-            Some(label.label().into_iter().map(|l| l.into()).collect());
+        self.label = Some(label.label().into_iter().map(Into::into).collect());
         self
     }
 }
@@ -933,7 +931,7 @@ where
 
                 let had_input_method = shell.input_method().is_enabled();
 
-                let mut c_event = match event.clone() {
+                let c_event = match event.clone() {
                     Event::Dnd(dnd::DndEvent::Offer(
                         id,
                         dnd::OfferEvent::Enter {
@@ -943,7 +941,7 @@ where
                             surface,
                         },
                     )) => Event::Dnd(dnd::DndEvent::Offer(
-                        id.clone(),
+                        id,
                         dnd::OfferEvent::Enter {
                             x: x + translation.x as f64,
                             y: y + translation.y as f64,
@@ -955,7 +953,7 @@ where
                         id,
                         dnd::OfferEvent::Motion { x, y },
                     )) => Event::Dnd(dnd::DndEvent::Offer(
-                        id.clone(),
+                        id,
                         dnd::OfferEvent::Motion {
                             x: x + translation.x as f64,
                             y: y + translation.y as f64,
@@ -1343,7 +1341,8 @@ where
         // Draw inner content
         if scrollbars.active() {
             let scale_factor = renderer.scale_factor().unwrap_or(1.0);
-            let translation = (translation * scale_factor).round() / scale_factor;
+            let translation =
+                (translation * scale_factor).round() / scale_factor;
 
             renderer.with_layer(visible_bounds, |renderer| {
                 renderer.with_translation(
@@ -1612,7 +1611,7 @@ where
         let child_tree = self.content.as_widget().a11y_nodes(
             child_layout
                 .with_virtual_offset(translation + layout.virtual_offset()),
-            &child_tree,
+            child_tree,
             cursor,
         );
         let bounds = Rect::new(
@@ -1721,11 +1720,11 @@ where
     }
 
     fn set_id(&mut self, id: Id) {
-        if let Id(Internal::Set(list)) = id {
-            if list.len() == 2 {
-                self.id.0 = list[0].clone();
-                self.scrollbar_id.0 = list[1].clone();
-            }
+        if let Id(Internal::Set(list)) = id
+            && list.len() == 2
+        {
+            self.id.0 = list[0].clone();
+            self.scrollbar_id.0 = list[1].clone();
         }
     }
 

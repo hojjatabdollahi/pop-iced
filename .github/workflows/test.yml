@@ -25,4 +25,6 @@ jobs:
         run: |
           cargo test --verbose --workspace
           cargo test --verbose --workspace -- --ignored
-          cargo test --verbose --workspace --all-features
+      - name: Run tests (all features, Linux only)
+        if: matrix.os == 'ubuntu-latest'
+        run: cargo test --verbose --workspace --all-features

@@ -63,10 +63,13 @@ impl ShmHandler for AppData {
 }
 
 pub fn subscription(connection: &Connection) -> iced::Subscription<Event> {
-    iced::Subscription::run_with(HashableConnection(connection.clone()), |conn| {
-        let conn = conn.0.clone();
-        async move { start(conn).await }.flatten_stream()
-    })
+    iced::Subscription::run_with(
+        HashableConnection(connection.clone()),
+        |conn| {
+            let conn = conn.0.clone();
+            async move { start(conn).await }.flatten_stream()
+        },
+    )
 }
 
 async fn start(conn: Connection) -> mpsc::Receiver<Event> {

@@ -210,9 +210,9 @@ pub fn run<P: program::Program + 'static>(
                 emulator::Event::Failed(instruction) => {
                     fs::create_dir_all(&errors_dir)?;
 
-                    let theme = emulator
-                        .theme(&program)
-                        .unwrap_or_else(|| <P::Theme as theme::Base>::default(theme::Mode::None));
+                    let theme = emulator.theme(&program).unwrap_or_else(|| {
+                        <P::Theme as theme::Base>::default(theme::Mode::None)
+                    });
 
                     let screenshot = emulator.screenshot(&program, &theme, 2.0);
 
@@ -225,8 +225,11 @@ pub fn run<P: program::Program + 'static>(
                         ),
                     )?;
 
-                    let mut encoder =
-                        png::Encoder::new(image, screenshot.size.width, screenshot.size.height);
+                    let mut encoder = png::Encoder::new(
+                        image,
+                        screenshot.size.width,
+                        screenshot.size.height,
+                    );
                     encoder.set_color(png::ColorType::Rgba);
 
                     let mut writer = encoder.write_header()?;
@@ -240,7 +243,10 @@ pub fn run<P: program::Program + 'static>(
                         instructions: ice.instructions[..current].to_vec(),
                     };
 
-                    fs::write(errors_dir.join(file.file_name()), reproduction.to_string())?;
+                    fs::write(
+                        errors_dir.join(file.file_name()),
+                        reproduction.to_string(),
+                    )?;
 
                     return Err(Error::IceTestingFailed {
                         file: file.path().to_path_buf(),

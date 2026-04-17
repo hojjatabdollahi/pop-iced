@@ -36,9 +36,8 @@ use std::borrow::Cow;
 
 use iced_runtime::core::border::Radius;
 
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
-use crate::core::border;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::renderer;
@@ -46,9 +45,8 @@ use crate::core::text;
 use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    Background, Border, Color, Element, Event, Layout, Length,
-    Pixels, Rectangle, Shell, Size,
-    Theme, Widget, id,
+    Background, Border, Color, Element, Event, Layout, Length, Pixels,
+    Rectangle, Shell, Size, Theme, Widget, id,
 };
 use crate::core::{
     widget::{self, Id},
@@ -313,7 +311,7 @@ where
         label: &dyn iced_accessibility::Labels,
     ) -> Self {
         self.labeled_by_widget =
-            Some(label.label().into_iter().map(|l| l.into()).collect());
+            Some(label.label().into_iter().map(Into::into).collect());
         self
     }
 }
@@ -399,7 +397,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
@@ -470,7 +468,7 @@ where
         theme: &Theme,
         defaults: &renderer::Style,
         layout: Layout<'_>,
-        cursor: mouse::Cursor,
+        _cursor: mouse::Cursor,
         viewport: &Rectangle,
     ) {
         let mut children = layout.children();

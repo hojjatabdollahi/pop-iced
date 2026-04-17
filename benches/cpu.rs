@@ -3,8 +3,12 @@ use criterion::{Bencher, Criterion, criterion_group, criterion_main};
 
 use iced::border;
 use iced::mouse;
-use iced::widget::{canvas, center_y, column, container, row, scrollable, space, text};
-use iced::{Center, Color, Element, Fill, Length, Never, Point, Rectangle, Size, Theme};
+use iced::widget::{
+    canvas, center_y, column, container, row, scrollable, space, text,
+};
+use iced::{
+    Center, Color, Element, Fill, Length, Never, Point, Rectangle, Size, Theme,
+};
 use iced_renderer::Renderer;
 use iced_renderer::core::renderer::{self, Headless as _};
 use iced_runtime::UserInterface;
@@ -34,8 +38,17 @@ pub fn benchmark(c: &mut Criterion) {
         });
 }
 
-fn draw(bencher: &mut Bencher<'_>, renderer: &mut Renderer, view: Element<'static, Never>) {
-    let mut ui = UserInterface::build(view, VIEWPORT, user_interface::Cache::new(), renderer);
+fn draw(
+    bencher: &mut Bencher<'_>,
+    renderer: &mut Renderer,
+    view: Element<'static, Never>,
+) {
+    let mut ui = UserInterface::build(
+        view,
+        VIEWPORT,
+        user_interface::Cache::new(),
+        renderer,
+    );
 
     bencher.iter(|| {
         ui.draw(
@@ -108,7 +121,8 @@ fn application() -> Element<'static, Never> {
     .style(|theme| {
         let palette = theme.palette();
 
-        container::Style::default().border(border::color(palette.background.strong.color).width(1))
+        container::Style::default()
+            .border(border::color(palette.background.strong.color).width(1))
     });
 
     let sidebar = center_y(

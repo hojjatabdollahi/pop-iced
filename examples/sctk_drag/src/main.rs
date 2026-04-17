@@ -19,8 +19,7 @@ use iced_core::{
 };
 
 fn main() -> iced::Result {
-    iced::daemon(DndTest::new, DndTest::update, DndTest::view)
-        .run()
+    iced::daemon(DndTest::new, DndTest::update, DndTest::view).run()
 }
 
 const SUPPORTED_MIME_TYPES: &'static [&'static str; 6] = &[

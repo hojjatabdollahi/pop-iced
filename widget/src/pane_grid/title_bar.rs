@@ -5,8 +5,10 @@ use crate::core::mouse;
 use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::Tree;
-use crate::core::{self, Element, Event, Layout, Padding, Point, Rectangle, Shell,
-    Size, Vector};
+use crate::core::{
+    self, Element, Event, Layout, Padding, Point, Rectangle, Shell, Size,
+    Vector,
+};
 use crate::pane_grid::controls::Controls;
 
 /// The title bar of a [`Pane`].

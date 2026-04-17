@@ -1,5 +1,5 @@
 #![allow(missing_docs)]
-use crate::core::event::{self, Event};
+use crate::core::event::Event;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -379,7 +379,7 @@ where
                     clipboard,
                     shell,
                     viewport,
-                )
+                );
             });
 
         if let Event::Window(window::Event::RedrawRequested(_)) = event {
@@ -460,29 +460,25 @@ where
             // Prepend new visible elements
             if let Some(first_visible) =
                 state.visible_layouts.first().map(|(i, _, _)| *i)
+                && start < first_visible
             {
-                if start < first_visible {
-                    for (i, item) in self.content.items[start..first_visible]
-                        .iter()
-                        .enumerate()
-                    {
-                        let mut element = (self.view_item)(start + i, item);
-                        let mut tree = Tree::new(&element);
+                for (i, item) in
+                    self.content.items[start..first_visible].iter().enumerate()
+                {
+                    let mut element = (self.view_item)(start + i, item);
+                    let mut tree = Tree::new(&element);
 
-                        let layout = element
-                            .as_widget_mut()
-                            .layout(&mut tree, renderer, &state.last_limits)
-                            .move_to((
-                                0.0,
-                                offsets[start + i]
-                                    + (start + i) as f32 * self.spacing,
-                            ));
+                    let layout = element
+                        .as_widget_mut()
+                        .layout(&mut tree, renderer, &state.last_limits)
+                        .move_to((
+                            0.0,
+                            offsets[start + i]
+                                + (start + i) as f32 * self.spacing,
+                        ));
 
-                        state
-                            .visible_layouts
-                            .insert(i, (start + i, layout, tree));
-                        self.visible_elements.insert(i, element);
-                    }
+                    state.visible_layouts.insert(i, (start + i, layout, tree));
+                    self.visible_elements.insert(i, element);
                 }
             }
 

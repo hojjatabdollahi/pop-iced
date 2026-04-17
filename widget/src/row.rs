@@ -1,14 +1,14 @@
 //! Distribute content horizontally.
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment::{self, Alignment};
+use crate::core::clipboard::Clipboard;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
 use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::{Operation, Tree};
 use crate::core::{
-    Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size,
-    Vector, Widget,
+    Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size, Vector,
+    Widget,
 };
 
 /// A container that distributes its contents horizontally.
@@ -280,16 +280,16 @@ where
             .zip(&mut tree.children)
             .zip(layout.children())
         {
-            child
-                .as_widget_mut()
-                .update(tree,
+            child.as_widget_mut().update(
+                tree,
                 event,
                 c_layout.with_virtual_offset(layout.virtual_offset()),
                 cursor,
                 renderer,
                 clipboard,
                 shell,
-                viewport);
+                viewport,
+            );
         }
     }
 
@@ -626,8 +626,9 @@ where
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.row
-            .update(tree, event, layout, cursor, renderer, clipboard, shell, viewport);
+        self.row.update(
+            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
+        );
     }
 
     fn mouse_interaction(

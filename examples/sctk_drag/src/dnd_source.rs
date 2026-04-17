@@ -1,17 +1,17 @@
 use std::any::Any;
 
-use iced::Element;
 use iced::id::Id;
 use iced::widget::container;
+use iced::Element;
 use iced::{
-    Event, Length, Point, Rectangle,
     clipboard::dnd::{DndAction, DndEvent, SourceEvent},
-    event, mouse, overlay,
+    event, mouse, overlay, Event, Length, Point, Rectangle,
 };
 use iced_core::{
-    Clipboard, Shell, Vector, layout, renderer,
     clipboard::IconSurface,
-    widget::{Tree, tree},
+    layout, renderer,
+    widget::{tree, Tree},
+    Clipboard, Shell, Vector,
 };
 use iced_core::{Layout, Widget};
 
@@ -30,16 +30,15 @@ pub struct DndSource<'a, Message, D> {
     action: DndAction,
     container: Element<'a, Message>,
     drag_content: Option<Box<dyn Fn() -> D>>,
-    drag_icon:
-        Option<Box<dyn Fn() -> (Element<'static, ()>, tree::State)>>,
+    drag_icon: Option<Box<dyn Fn() -> (Element<'static, ()>, tree::State)>>,
     drag_threshold: f32,
 }
 
 impl<
-    'a,
-    Message: 'static,
-    D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
-> DndSource<'a, Message, D>
+        'a,
+        Message: 'static,
+        D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
+    > DndSource<'a, Message, D>
 {
     pub fn new(child: impl Into<Element<'a, Message>>) -> Self {
         Self {
@@ -116,10 +115,10 @@ impl<
 }
 
 impl<
-    'a,
-    Message: 'static,
-    D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
-> Widget<Message, iced::Theme, iced::Renderer>
+        'a,
+        Message: 'static,
+        D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
+    > Widget<Message, iced::Theme, iced::Renderer>
     for DndSource<'a, Message, D>
 {
     fn children(&self) -> Vec<Tree> {
@@ -165,7 +164,11 @@ impl<
         renderer: &iced::Renderer,
         operation: &mut dyn iced_core::widget::Operation,
     ) {
-        operation.custom(Some(&self.id), layout.bounds(), (&mut tree.state) as &mut dyn Any);
+        operation.custom(
+            Some(&self.id),
+            layout.bounds(),
+            (&mut tree.state) as &mut dyn Any,
+        );
         operation.container(Some(&self.id), layout.bounds());
         operation.traverse(&mut |operation| {
             self.container.as_widget_mut().operate(
@@ -350,10 +353,10 @@ impl<
 }
 
 impl<
-    'a,
-    Message: 'static,
-    D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
-> From<DndSource<'a, Message, D>> for Element<'a, Message>
+        'a,
+        Message: 'static,
+        D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
+    > From<DndSource<'a, Message, D>> for Element<'a, Message>
 {
     fn from(e: DndSource<'a, Message, D>) -> Element<'a, Message> {
         Element::new(e)

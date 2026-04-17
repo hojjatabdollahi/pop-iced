@@ -80,10 +80,11 @@ impl core::text::Paragraph for Paragraph {
         let mut font_system =
             text::font_system().write().expect("Write font system");
 
-        let (hint, hint_factor) = match text::hint_factor(text.size, text.hint_factor) {
-            Some(hint_factor) => (true, hint_factor),
-            _ => (false, 1.0),
-        };
+        let (hint, hint_factor) =
+            match text::hint_factor(text.size, text.hint_factor) {
+                Some(hint_factor) => (true, hint_factor),
+                _ => (false, 1.0),
+            };
 
         let mut buffer = cosmic_text::Buffer::new(
             font_system.raw(),
@@ -140,10 +141,11 @@ impl core::text::Paragraph for Paragraph {
         let mut font_system =
             text::font_system().write().expect("Write font system");
 
-        let (hint, hint_factor) = match text::hint_factor(text.size, text.hint_factor) {
-            Some(hint_factor) => (true, hint_factor),
-            _ => (false, 1.0),
-        };
+        let (hint, hint_factor) =
+            match text::hint_factor(text.size, text.hint_factor) {
+                Some(hint_factor) => (true, hint_factor),
+                _ => (false, 1.0),
+            };
 
         let mut buffer = cosmic_text::Buffer::new(
             font_system.raw(),
@@ -256,7 +258,8 @@ impl core::text::Paragraph for Paragraph {
         if paragraph.version != font_system.version
             || metrics.font_size != text.size.0 * paragraph.hint_factor
             || metrics.line_height
-                != text.line_height.to_absolute(text.size).0 * paragraph.hint_factor
+                != text.line_height.to_absolute(text.size).0
+                    * paragraph.hint_factor
             || paragraph.font != text.font
             || paragraph.shaping != text.shaping
             || paragraph.wrapping != text.wrapping

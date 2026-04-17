@@ -8,7 +8,6 @@ use crate::futures::futures::{
 use crate::graphics::shell;
 use crate::runtime::Action;
 use crate::runtime::window;
-use std::hash::DefaultHasher;
 use std::pin::Pin;
 
 /// An event loop proxy with backpressure that implements `Sink`.
@@ -52,7 +51,7 @@ impl<T: 'static> Proxy<T> {
                     select! {
                         message = receiver.select_next_some() => {
                             let _ = event_sender_clone.unbounded_send(Event::UserEvent(message));
-                            let _ = proxy.wake_up();
+                            proxy.wake_up();
                             count += 1;
 
                         }

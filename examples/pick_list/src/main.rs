@@ -25,9 +25,13 @@ impl Example {
     }
 
     fn view(&self) -> Element<'_, Message> {
-        let languages = pick_list(self.selected_language, Language::ALL, Language::to_string)
-            .on_select(Message::LanguageSelected)
-            .placeholder("Choose a language...");
+        let languages = pick_list(
+            self.selected_language,
+            Language::ALL,
+            Language::to_string,
+        )
+        .on_select(Message::LanguageSelected)
+        .placeholder("Choose a language...");
 
         let content = column![
             space().height(600),

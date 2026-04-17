@@ -59,10 +59,14 @@ pub fn wgpu_benchmark(c: &mut Criterion) {
             benchmark(b, &adapter, &device, &queue, |i| dynamic_text(1_000, i));
         })
         .bench_function("wgpu - dynamic text (heavy)", |b| {
-            benchmark(b, &adapter, &device, &queue, |i| dynamic_text(100_000, i));
+            benchmark(b, &adapter, &device, &queue, |i| {
+                dynamic_text(100_000, i)
+            });
         })
         .bench_function("wgpu - advanced shaping (light)", |b| {
-            benchmark(b, &adapter, &device, &queue, |i| advanced_shaping(1_000, i));
+            benchmark(b, &adapter, &device, &queue, |i| {
+                advanced_shaping(1_000, i)
+            });
         })
         .bench_function("wgpu - advanced shaping (heavy)", |b| {
             benchmark(b, &adapter, &device, &queue, |i| {

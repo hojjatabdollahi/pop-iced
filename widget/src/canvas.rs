@@ -67,8 +67,7 @@ use crate::core::mouse;
 use crate::core::renderer;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
-use crate::core::{Element, Length, Rectangle, Shell, Size, Vector, Widget,
-};
+use crate::core::{Element, Length, Rectangle, Shell, Size, Vector, Widget};
 use crate::graphics::geometry;
 
 use std::marker::PhantomData;

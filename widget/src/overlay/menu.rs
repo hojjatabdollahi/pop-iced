@@ -1,7 +1,7 @@
 //! Build and show dropdown menus.
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
 use crate::core::border::{self, Border};
+use crate::core::clipboard::Clipboard;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
 use crate::core::overlay;
@@ -11,9 +11,8 @@ use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Color, Event, Length, Padding, Pixels, Point,
-    Rectangle, Shadow, Size, Theme,
-    Vector,
+    Background, Color, Event, Length, Padding, Pixels, Point, Rectangle,
+    Shadow, Size, Theme, Vector,
 };
 use crate::core::{Element, Shell, Widget};
 use crate::scrollable::{self, Scrollable};
@@ -424,7 +423,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

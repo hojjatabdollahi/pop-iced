@@ -7,8 +7,9 @@ use crate::overlay;
 use crate::renderer;
 use crate::widget;
 use crate::widget::tree::{self, Tree};
-use crate::{Border, Color, Layout, Length, Rectangle, Shell, Size, Vector,
-    Widget};
+use crate::{
+    Border, Color, Layout, Length, Rectangle, Shell, Size, Vector, Widget,
+};
 
 use std::borrow::{Borrow, BorrowMut};
 

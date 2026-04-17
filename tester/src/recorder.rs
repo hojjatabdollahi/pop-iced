@@ -7,8 +7,8 @@ use crate::core::widget;
 use crate::core::widget::operation;
 use crate::core::widget::tree;
 use crate::core::{
-    self, Color, Element, Event, Layout, Length, Point, Rectangle,
-    Shell, Size, Vector, Widget,
+    self, Color, Element, Event, Layout, Length, Point, Rectangle, Shell, Size,
+    Vector, Widget,
 };
 use crate::test::Selector;
 use crate::test::instruction::{Interaction, Mouse, Target};

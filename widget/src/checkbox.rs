@@ -36,8 +36,8 @@ use iced_runtime::core::widget::Id;
 #[cfg(feature = "a11y")]
 use std::borrow::Cow;
 
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::renderer;
@@ -48,9 +48,8 @@ use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Border, Color, Element, Event, Layout, Length,
-    Pixels, Rectangle, Shell, Size,
-    Theme, Widget, id::Internal,
+    Background, Border, Color, Element, Event, Layout, Length, Pixels,
+    Rectangle, Shell, Size, Theme, Widget, id::Internal,
 };
 
 /// A box that can be checked.
@@ -372,7 +371,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
@@ -601,11 +600,11 @@ where
     }
 
     fn set_id(&mut self, id: Id) {
-        if let Id(Internal::Set(list)) = id {
-            if list.len() == 2 {
-                self.id.0 = list[0].clone();
-                self.label_id.0 = list[1].clone();
-            }
+        if let Id(Internal::Set(list)) = id
+            && list.len() == 2
+        {
+            self.id.0 = list[0].clone();
+            self.label_id.0 = list[1].clone();
         }
     }
 }

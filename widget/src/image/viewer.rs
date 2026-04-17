@@ -1,15 +1,14 @@
 //! Zoom and pan on an image.
-use crate::core::clipboard::Clipboard;
 use crate::core::border;
+use crate::core::clipboard::Clipboard;
 use crate::core::image::{self, FilterMethod};
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::renderer;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    ContentFit, Element, Event, Image, Layout, Length, Pixels,
-    Point, Radians, Rectangle, Shell,
-    Size, Vector, Widget,
+    ContentFit, Element, Event, Image, Layout, Length, Pixels, Point, Radians,
+    Rectangle, Shell, Size, Vector, Widget,
 };
 
 /// A frame that displays an image with the ability to zoom in/out and pan.

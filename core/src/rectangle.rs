@@ -270,7 +270,8 @@ impl Rectangle<f32> {
     /// Rounds the [`Rectangle`] coordinates.
     pub fn round(self) -> Self {
         let top_left = self.position().round();
-        let bottom_right = (self.position() + Vector::from(self.size())).round();
+        let bottom_right =
+            (self.position() + Vector::from(self.size())).round();
 
         Self {
             x: top_left.x,

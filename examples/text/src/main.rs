@@ -62,7 +62,8 @@ impl Text {
 
     fn subscription(&self) -> Subscription<Message> {
         event::listen_with(|event, _, _| {
-            let Event::Window(window::Event::Rescaled(scale_factor)) = event else {
+            let Event::Window(window::Event::Rescaled(scale_factor)) = event
+            else {
                 return None;
             };
 

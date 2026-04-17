@@ -349,7 +349,7 @@ where
                 shaping: text::Shaping::Advanced,
                 wrapping: text::Wrapping::default(),
                 ellipsize: text::Ellipsize::default(),
-            hint_factor: None,
+                hint_factor: None,
             };
 
             let _ = state.icon.update(icon_text);
@@ -1692,7 +1692,7 @@ fn replace_paragraph<Renderer>(
         shaping: text::Shaping::Advanced,
         wrapping: text::Wrapping::default(),
         ellipsize: text::Ellipsize::default(),
-            hint_factor: None,
+        hint_factor: None,
     });
 }
 

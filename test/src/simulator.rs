@@ -180,9 +180,12 @@ where
     ) -> Vec<event::Status> {
         let events: Vec<Event> = events.into_iter().collect();
 
-        let (_state, statuses) =
-            self.raw
-                .update(&events, self.cursor, &mut self.renderer, &mut self.messages);
+        let (_state, statuses) = self.raw.update(
+            &events,
+            self.cursor,
+            &mut self.renderer,
+            &mut self.messages,
+        );
 
         statuses
     }

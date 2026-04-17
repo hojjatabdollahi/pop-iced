@@ -2,7 +2,7 @@
 
 use crate::core::window::Id as SurfaceId;
 use iced_runtime::{
-    self,
+    self, Action, Task,
     platform_specific::{
         self,
         wayland::{
@@ -10,7 +10,7 @@ use iced_runtime::{
             layer_surface::{IcedMargin, SctkLayerSurfaceSettings},
         },
     },
-    task, Action, Task,
+    task,
 };
 
 pub use cctk::sctk::shell::wlr_layer::{Anchor, KeyboardInteractivity, Layer};

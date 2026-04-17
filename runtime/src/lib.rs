@@ -98,7 +98,9 @@ impl<T> Action<T> {
             Action::System(action) => Err(Action::System(action)),
             Action::Font(action) => Err(Action::Font(action)),
             Action::Image(action) => Err(Action::Image(action)),
-            Action::Event { window, event } => Err(Action::Event { window, event }),
+            Action::Event { window, event } => {
+                Err(Action::Event { window, event })
+            }
             Action::Tick => Err(Action::Tick),
             Action::Reload => Err(Action::Reload),
             Action::Exit => Err(Action::Exit),

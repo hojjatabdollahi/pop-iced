@@ -19,9 +19,9 @@
 //!         .into()
 //! }
 //! ```
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment::{self, Alignment};
 use crate::core::border::{self, Border};
+use crate::core::clipboard::Clipboard;
 use crate::core::gradient::{self, Gradient};
 use crate::core::layout;
 use crate::core::mouse;
@@ -31,13 +31,11 @@ use crate::core::theme;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::widget::{self, Id, Operation};
 use crate::core::{
-    self, Background, Color, Element, Event, Layout, Length,
-    Padding, Pixels, Rectangle, Shadow,
-    Shell, Size, Theme, Vector, Widget,
-    color,
+    self, Background, Color, Element, Event, Layout, Length, Padding, Pixels,
+    Rectangle, Shadow, Shell, Size, Theme, Vector, Widget, color,
 };
 
-use iced_runtime::{Action, Task, task};
+use iced_runtime::{Task, task};
 
 /// A widget that aligns its contents inside of its boundaries.
 ///

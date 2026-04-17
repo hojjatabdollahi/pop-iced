@@ -55,7 +55,8 @@ impl Value {
     /// Returns the position of the next end of a word from the given grapheme
     /// `index`.
     pub fn next_end_of_word(&self, index: usize) -> usize {
-        let next_string = &self.graphemes[index.min(self.graphemes.len())..].concat();
+        let next_string =
+            &self.graphemes[index.min(self.graphemes.len())..].concat();
 
         UnicodeSegmentation::split_word_bound_indices(next_string as &str)
             .find(|(_, word)| !word.trim_start().is_empty())
@@ -131,7 +132,7 @@ impl Value {
     pub fn byte_index_at_grapheme(&self, grapheme_index: usize) -> usize {
         self.graphemes[..grapheme_index.min(self.graphemes.len())]
             .iter()
-            .map(|g| g.len())
+            .map(std::string::String::len)
             .sum()
     }
 

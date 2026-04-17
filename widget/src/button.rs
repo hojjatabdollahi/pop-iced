@@ -23,8 +23,8 @@ use iced_runtime::{Task, keyboard, task};
 #[cfg(feature = "a11y")]
 use std::borrow::Cow;
 
-use crate::core::clipboard::Clipboard;
 use crate::core::border::{self, Border};
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -35,9 +35,8 @@ use crate::core::widget::Operation;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    Background, Color, Element, Event, Layout, Length, Padding,
-    Rectangle, Shadow, Shell, Size,
-    Theme, Vector, Widget,
+    Background, Color, Element, Event, Layout, Length, Padding, Rectangle,
+    Shadow, Shell, Size, Theme, Vector, Widget,
 };
 
 use iced_renderer::core::widget::operation;
@@ -258,8 +257,7 @@ where
     #[cfg(feature = "a11y")]
     /// Sets the label of the [`Button`].
     pub fn label(mut self, label: &dyn iced_accessibility::Labels) -> Self {
-        self.label =
-            Some(label.label().into_iter().map(|l| l.into()).collect());
+        self.label = Some(label.label().into_iter().map(Into::into).collect());
         self
     }
 }
@@ -608,17 +606,14 @@ where
         node.add_action(Action::Click);
         node.set_bounds(bounds);
         if let Some(name) = self.name.as_ref()
-            && self.label.as_ref().is_none_or(|l| l.is_empty())
+            && self.label.as_ref().is_none_or(Vec::is_empty)
         {
             node.set_label(name.clone());
         }
         match self.description.as_ref() {
             Some(iced_accessibility::Description::Id(id)) => {
                 node.set_described_by(
-                    id.iter()
-                        .cloned()
-                        .map(|id| NodeId::from(id))
-                        .collect::<Vec<_>>(),
+                    id.iter().cloned().map(NodeId::from).collect::<Vec<_>>(),
                 );
             }
             Some(iced_accessibility::Description::Text(text)) => {
@@ -632,7 +627,7 @@ where
         }
 
         if self.on_press.is_none() {
-            node.set_disabled()
+            node.set_disabled();
         }
         // TODO hover
         // if is_hovered {

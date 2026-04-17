@@ -478,9 +478,10 @@ where
             .zip(&mut tree.children)
             .zip(layout.children())
         {
-            cell.as_widget_mut()
-                .update(tree, event, layout, cursor, renderer, clipboard, shell,
-                viewport);
+            cell.as_widget_mut().update(
+                tree, event, layout, cursor, renderer, clipboard, shell,
+                viewport,
+            );
         }
     }
 

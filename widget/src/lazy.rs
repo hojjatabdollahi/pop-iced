@@ -9,17 +9,15 @@ use iced_renderer::core::widget::Operation;
 
 mod cache;
 
-use crate::core::clipboard::Clipboard;
 use crate::core::Element;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
 use crate::core::overlay;
 use crate::core::renderer;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::widget::{self, Widget};
-use crate::core::{
-    self, Event, Length, Rectangle, Shell, Size, Vector,
-};
+use crate::core::{self, Event, Length, Rectangle, Shell, Size, Vector};
 
 use ouroboros::self_referencing;
 use rustc_hash::FxHasher;

@@ -4,8 +4,8 @@ use crate::platform_specific::wayland::{
 };
 use cctk::sctk::{
     delegate_seat,
-    reexports::client::{protocol::wl_keyboard::WlKeyboard, Proxy},
-    seat::{pointer::ThemeSpec, SeatHandler},
+    reexports::client::{Proxy, protocol::wl_keyboard::WlKeyboard},
+    seat::{SeatHandler, pointer::ThemeSpec},
 };
 use iced_runtime::keyboard::Modifiers;
 use std::sync::Arc;

@@ -28,8 +28,8 @@
 //!     }
 //! }
 //! ```
-use crate::core::clipboard::Clipboard;
 use crate::core::border::{self, Border};
+use crate::core::clipboard::Clipboard;
 use crate::core::keyboard;
 use crate::core::keyboard::key::{self, Key};
 use crate::core::layout;
@@ -40,9 +40,8 @@ use crate::core::widget::Id;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
 use crate::core::{
-    self, Background, Color, Element, Event, Layout, Length, Pixels,
-    Point, Rectangle, Shell, Size,
-    Theme, Widget,
+    self, Background, Color, Element, Event, Layout, Length, Pixels, Point,
+    Rectangle, Shell, Size, Theme, Widget,
 };
 
 use std::ops::RangeInclusive;
@@ -271,8 +270,7 @@ where
     #[cfg(feature = "a11y")]
     /// Sets the label of the [`Slider`].
     pub fn label(mut self, label: &dyn iced_accessibility::Labels) -> Self {
-        self.label =
-            Some(label.label().into_iter().map(|l| l.into()).collect());
+        self.label = Some(label.label().into_iter().map(Into::into).collect());
         self
     }
 }
@@ -316,7 +314,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
@@ -432,16 +430,14 @@ where
                 | Event::Touch(touch::Event::FingerMoved { .. })
                     if state.is_dragging =>
                 {
-                    let _ = cursor
-                        .land()
-                        .position()
-                        .and_then(locate)
-                        .map(change);
+                    let _ =
+                        cursor.land().position().and_then(locate).map(change);
 
                     shell.capture_event();
                 }
                 Event::Mouse(mouse::Event::WheelScrolled { delta })
-                    if state.keyboard_modifiers.control() && cursor.is_over(layout.bounds()) =>
+                    if state.keyboard_modifiers.control()
+                        && cursor.is_over(layout.bounds()) =>
                 {
                     let delta = match delta {
                         mouse::ScrollDelta::Lines { x: _, y } => y,
@@ -458,21 +454,17 @@ where
                 }
                 Event::Keyboard(keyboard::Event::KeyPressed {
                     key, ..
-                })
-                    if cursor.is_over(layout.bounds()) =>
-                {
-                    match key {
-                        Key::Named(key::Named::ArrowUp) => {
-                            let _ = increment(current_value).map(change);
-                            shell.capture_event();
-                        }
-                        Key::Named(key::Named::ArrowDown) => {
-                            let _ = decrement(current_value).map(change);
-                            shell.capture_event();
-                        }
-                        _ => (),
+                }) if cursor.is_over(layout.bounds()) => match key {
+                    Key::Named(key::Named::ArrowUp) => {
+                        let _ = increment(current_value).map(change);
+                        shell.capture_event();
                     }
-                }
+                    Key::Named(key::Named::ArrowDown) => {
+                        let _ = decrement(current_value).map(change);
+                        shell.capture_event();
+                    }
+                    _ => (),
+                },
                 Event::Keyboard(keyboard::Event::ModifiersChanged(
                     modifiers,
                 )) => {

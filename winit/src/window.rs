@@ -222,8 +222,8 @@ where
                 position.to_logical(self.raw.scale_factor())
             })
             .map(|position: LogicalPosition<f32>| Point {
-                x: position.x as f32,
-                y: position.y as f32,
+                x: position.x,
+                y: position.y,
             })
     }
 

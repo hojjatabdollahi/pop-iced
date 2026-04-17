@@ -68,7 +68,7 @@ where
 
             Viewport::with_physical_size(
                 Size::new(physical_size.width, physical_size.height),
-                window.scale_factor() as f64 * scale_factor,
+                window.scale_factor() * scale_factor,
             )
         };
 

@@ -1,7 +1,6 @@
 use crate::container;
 
 use crate::core::clipboard::Clipboard;
-use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -10,8 +9,8 @@ use crate::core::theme;
 use crate::core::widget::Operation;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    Background, Color, Element, Event, Layout, Length, Rectangle,
-    Shell, Size, Vector, Widget,
+    Background, Color, Element, Event, Layout, Length, Rectangle, Shell, Size,
+    Vector, Widget,
 };
 
 /// A widget that applies any `Theme` to its contents.
@@ -118,9 +117,9 @@ where
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.content
-            .as_widget_mut()
-            .update(tree, event, layout, cursor, renderer, clipboard, shell, viewport);
+        self.content.as_widget_mut().update(
+            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
+        );
     }
 
     fn mouse_interaction(
@@ -162,7 +161,7 @@ where
 
         let style = if let Some(text_color) = self.text_color {
             renderer::Style {
-                text_color: text_color(&theme),
+                text_color: text_color(theme),
                 icon_color: style.icon_color, // TODO(POP): Is this correct?
                 scale_factor: style.scale_factor, // TODO(POP): Is this correct?
             }
@@ -229,9 +228,9 @@ where
                 clipboard: &mut dyn Clipboard,
                 shell: &mut Shell<'_, Message>,
             ) {
-                self.content.as_overlay_mut().update(
-                    event, layout, cursor, renderer, clipboard, shell,
-                );
+                self.content
+                    .as_overlay_mut()
+                    .update(event, layout, cursor, renderer, clipboard, shell);
             }
 
             fn operate(

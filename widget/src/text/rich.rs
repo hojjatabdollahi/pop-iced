@@ -1,5 +1,5 @@
-use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::renderer;
@@ -10,9 +10,8 @@ use crate::core::widget::text::{
 };
 use crate::core::widget::tree::{self, Tree};
 use crate::core::{
-    self, Color, Element, Event, Layout, Length, Pixels, Point,
-    Rectangle, Shell, Size, Vector,
-    Widget,
+    self, Color, Element, Event, Layout, Length, Pixels, Point, Rectangle,
+    Shell, Size, Vector, Widget,
 };
 
 /// A bunch of [`Rich`] text.
@@ -391,7 +390,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

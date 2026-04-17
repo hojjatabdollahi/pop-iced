@@ -3,8 +3,9 @@ use crate::core::font;
 use crate::core::image;
 use crate::core::renderer;
 use crate::core::svg;
-use crate::core::{self, Background, Color, Image, Point, Rectangle, Size, Svg,
-    Transformation};
+use crate::core::{
+    self, Background, Color, Image, Point, Rectangle, Size, Svg, Transformation,
+};
 use crate::graphics::compositor;
 use crate::graphics::mesh;
 use crate::graphics::text;
@@ -390,7 +391,10 @@ where
         }
     }
 
-    fn load_font(&mut self, font: Cow<'static, [u8]>) -> Result<(), font::Error> {
+    fn load_font(
+        &mut self,
+        font: Cow<'static, [u8]>,
+    ) -> Result<(), font::Error> {
         delegate!(self, compositor, compositor.load_font(font))
     }
 
@@ -703,10 +707,11 @@ where
     A: renderer::Headless,
     B: renderer::Headless,
 {
-    async fn new(settings: renderer::Settings, backend: Option<&str>) -> Option<Self> {
-        if let Some(renderer) =
-            A::new(settings, backend).await
-        {
+    async fn new(
+        settings: renderer::Settings,
+        backend: Option<&str>,
+    ) -> Option<Self> {
+        if let Some(renderer) = A::new(settings, backend).await {
             return Some(Self::Primary(renderer));
         }
 

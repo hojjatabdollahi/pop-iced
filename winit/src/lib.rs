@@ -40,12 +40,6 @@ pub mod clipboard;
 pub mod conversion;
 pub mod platform_specific;
 
-#[cfg(feature = "program")]
-pub mod program;
-
-#[cfg(feature = "system")]
-pub mod system;
-
 mod error;
 mod proxy;
 mod window;
@@ -53,7 +47,6 @@ mod window;
 pub use clipboard::Clipboard;
 pub use error::Error;
 pub use proxy::Proxy;
-use winit::dpi::LogicalSize;
 use winit::dpi::PhysicalPosition;
 use winit::dpi::PhysicalSize;
 
@@ -106,7 +99,7 @@ where
     let is_wayland = false;
 
     let graphics_settings = settings.clone().into();
-    let compositor_settings = compositor::Settings::from(&settings);
+    let _compositor_settings = compositor::Settings::from(&settings);
     let renderer_settings = renderer::Settings::from(&settings);
     let display_handle = event_loop.owned_display_handle();
 
@@ -196,10 +189,13 @@ where
         error: Option<Error>,
         system_theme: Option<oneshot::Sender<theme::Mode>>,
         control_sender: mpsc::UnboundedSender<Control>,
-        
+
         #[cfg(feature = "a11y")]
-        adapters: std::collections::HashMap<window::Id, (u64, iced_accessibility::accesskit_winit::Adapter)>,
-    
+        adapters: std::collections::HashMap<
+            window::Id,
+            (u64, iced_accessibility::accesskit_winit::Adapter),
+        >,
+
         #[cfg(target_arch = "wasm32")]
         is_booted: std::rc::Rc<std::cell::RefCell<bool>>,
         #[cfg(target_arch = "wasm32")]
@@ -223,7 +219,7 @@ where
         system_theme: Some(system_theme_sender),
 
         #[cfg(feature = "a11y")]
-        adapters: Default::default(),
+        adapters: std::collections::HashMap::default(),
 
         #[cfg(target_arch = "wasm32")]
         canvas: None,
@@ -325,16 +321,16 @@ where
             // create initial window
             let Some(BootConfig {
                 sender,
-                fonts,
-                graphics_settings,
-                is_wayland,
+                fonts: _,
+                graphics_settings: _,
+                is_wayland: _,
             }) = self.boot.take()
             else {
                 return;
             };
 
             let finish_boot = async move {
-                sender.send(()).ok().expect("Send boot event");
+                sender.send(()).expect("Send boot event");
                 Ok::<_, graphics::Error>(())
             };
 
@@ -504,9 +500,15 @@ where
                                         }
                                     };
                                 }
-                                let window: Arc<dyn winit::window::Window + 'static> = Arc::from(window);
+                                let window: Arc<
+                                    dyn winit::window::Window + 'static,
+                                > = Arc::from(window);
                                 #[cfg(feature = "a11y")]
-                                self.init_adapter(event_loop, id, window.clone());
+                                self.init_adapter(
+                                    event_loop,
+                                    id,
+                                    window.clone(),
+                                );
 
                                 self.process_event(
                                     event_loop,
@@ -575,11 +577,13 @@ where
                                     .expect("Send event");
                             }
                             Control::Winit(id, e) => {
-                                #[cfg(all(feature = "cctk", target_os = "linux"))]
+                                #[cfg(all(
+                                    feature = "cctk",
+                                    target_os = "linux"
+                                ))]
                                 {
                                     if matches!(e, WindowEvent::RedrawRequested)
-                                    {                    
-                                        
+                                    {
                                         for id in crate::subsurface_widget::subsurface_ids(id) {
                                             _ = self.sender
                                                 .unbounded_send(Event::Winit(
@@ -600,7 +604,7 @@ where
                                         }
                                     }
                                 }
-                                
+
                                 self.sender
                                     .start_send(Event::Winit(id, e))
                                     .expect("Send event");
@@ -613,7 +617,7 @@ where
                             #[cfg(feature = "a11y")]
                             Control::InitAdapter(id, window) => {
                                 self.init_adapter(event_loop, id, window);
-                            
+
                                 self.process_event(
                                     event_loop,
                                     Some(Event::A11yAdapter(id)),
@@ -621,8 +625,8 @@ where
                             }
                             #[cfg(feature = "a11y")]
                             Control::Cleanup(id) => {
-                               _ = self.adapters.remove(&id);
-                            },
+                                _ = self.adapters.remove(&id);
+                            }
                         },
                         _ => {
                             break;
@@ -636,34 +640,35 @@ where
             }
         }
 
-    #[cfg(feature = "a11y")]
-    fn init_adapter(&mut self, event_loop: &(dyn winit::event_loop::ActiveEventLoop + 'static), id: core::window::Id, window: Arc<dyn winit::window::Window + 'static>) {
+        #[cfg(feature = "a11y")]
+        fn init_adapter(
+            &mut self,
+            event_loop: &(dyn winit::event_loop::ActiveEventLoop + 'static),
+            id: core::window::Id,
+            window: Arc<dyn winit::window::Window + 'static>,
+        ) {
             use crate::a11y::*;
             use iced_accessibility::accesskit::{
-                ActivationHandler, Node, NodeId, Role,
-                Tree, TreeUpdate,
+                ActivationHandler, Node, NodeId, Role, Tree, TreeUpdate,
             };
             use iced_accessibility::accesskit_winit::Adapter;
-        
-            let node_id =
-                iced_runtime::core::id::window_node_id();
-        
-            let activation_handler =
-                WinitActivationHandler {
-                    proxy: self.control_sender.clone(),
-                    title: String::new(),
-                };
-        
+
+            let node_id = iced_runtime::core::id::window_node_id();
+
+            let activation_handler = WinitActivationHandler {
+                proxy: self.control_sender.clone(),
+                title: String::new(),
+            };
+
             let action_handler = WinitActionHandler {
                 id,
                 proxy: self.control_sender.clone(),
             };
-        
-            let deactivation_handler =
-                WinitDeactivationHandler {
-                    proxy: self.control_sender.clone(),
-                };
-        
+
+            let deactivation_handler = WinitDeactivationHandler {
+                proxy: self.control_sender.clone(),
+            };
+
             _ = self.adapters.insert(
                 id,
                 (
@@ -677,8 +682,6 @@ where
                     ),
                 ),
             );
-        
-            
         }
     }
 
@@ -770,7 +773,7 @@ async fn run_instance<P>(
     use winit::event;
     use winit::event_loop::ControlFlow;
 
-    _ = boot.await.expect("Receive boot");
+    boot.await.expect("Receive boot");
 
     let mut platform_specific_handler =
         crate::platform_specific::PlatformSpecific::default();
@@ -782,6 +785,8 @@ async fn run_instance<P>(
             display_handle.clone(),
         );
     }
+    #[cfg(not(all(feature = "cctk", target_os = "linux")))]
+    let _ = is_wayland;
 
     let mut window_manager: WindowManager<
         P,
@@ -861,9 +866,8 @@ async fn run_instance<P>(
                 exit_on_close_request,
                 make_visible,
                 on_open,
-                resize_border
+                resize_border,
             } => {
-                
                 #[cfg(all(feature = "cctk", target_os = "linux"))]
                 platform_specific_handler.send_wayland(
                     platform_specific::Action::TrackWindow(window.clone(), id),
@@ -1026,7 +1030,7 @@ async fn run_instance<P>(
                     &mut renderer_settings,
                 );
                 if exited {
-                    runtime.track(None.into_iter());
+                    runtime.track(None);
                 }
                 actions += 1;
             }
@@ -1035,7 +1039,7 @@ async fn run_instance<P>(
                     continue;
                 };
 
-                let Some((id, mut window))  =
+                let Some((id, mut window)) =
                     window_manager.get_mut_alias(window_id)
                 else {
                     continue;
@@ -1050,7 +1054,7 @@ async fn run_instance<P>(
                         ))
                         .expect("Send redraw event");
                     continue;
-                } 
+                }
                 // XX must force update to corner radius before the surface is committed.
                 #[cfg(all(feature = "cctk", target_os = "linux"))]
                 if window.surface_version != window.state.surface_version()
@@ -1183,7 +1187,7 @@ async fn run_instance<P>(
                                 &mut is_window_opening,
                                 &mut system_theme,
                                 &mut platform_specific_handler,
-                    &mut renderer_settings,
+                                &mut renderer_settings,
                             );
                         }
 
@@ -1325,7 +1329,7 @@ async fn run_instance<P>(
                     && !is_window_opening
                     && window_manager.is_empty()
                 {
-                    runtime.track(None.into_iter());
+                    runtime.track(None);
                     control_sender
                         .start_send(Control::Exit)
                         .expect("Send control action");
@@ -1339,12 +1343,10 @@ async fn run_instance<P>(
                     continue;
                 };
                 // Initiates a drag resize window state when found.
-                if let Some(func) =
-                    window.drag_resize_window_func.as_mut()
+                if let Some(func) = window.drag_resize_window_func.as_mut()
+                    && func(window.raw.as_ref(), &event)
                 {
-                    if func(window.raw.as_ref(), &event) {
-                        continue;
-                    }
+                    continue;
                 }
                 match event {
                     winit::event::WindowEvent::SurfaceResized(_) => {
@@ -1382,7 +1384,7 @@ async fn run_instance<P>(
                         &mut is_window_opening,
                         &mut system_theme,
                         &mut platform_specific_handler,
-                    &mut renderer_settings,
+                        &mut renderer_settings,
                     );
                 } else {
                     window.state.update(&program, window.raw.as_ref(), &event);
@@ -1511,7 +1513,7 @@ async fn run_instance<P>(
                     }
 
                     for (event, status) in
-                        window_events.into_iter().zip(statuses.into_iter())
+                        window_events.into_iter().zip(statuses)
                     {
                         runtime.broadcast(subscription::Event::Interaction {
                             window: id,
@@ -1576,10 +1578,10 @@ async fn run_instance<P>(
                             &mut is_window_opening,
                             &mut system_theme,
                             &mut platform_specific_handler,
-                    &mut renderer_settings,
+                            &mut renderer_settings,
                         );
                         if exited {
-                            runtime.track(None.into_iter());
+                            runtime.track(None);
                         }
                     }
 
@@ -1703,12 +1705,9 @@ async fn run_instance<P>(
                 .await;
             }
             Event::StartDnd => {
-                let compositor = match compositor.as_mut() {
-                    Some(c) => c,
-                    None => {
-                        log::error!("No compositor for DnD");
-                        continue;
-                    }
+                let Some(compositor) = compositor.as_mut() else {
+                    log::error!("No compositor for DnD");
+                    continue;
                 };
                 let queued = clipboard.get_queued();
                 for crate::clipboard::StartDnd {
@@ -1740,7 +1739,7 @@ async fn run_instance<P>(
                                     user_interfaces.iter_mut().find_map(
                                     |(ui_id, ui)| {
                                         let Some(ui_renderer) = window_manager
-                                            .get_mut(ui_id.clone())
+                                            .get_mut(*ui_id)
                                             .map(|w| &w.renderer)
                                         else {
                                             return None;
@@ -1772,7 +1771,7 @@ async fn run_instance<P>(
                                                 operation::Outcome::Some(
                                                     (),
                                                 ) => {
-                                                    return Some(ui_id.clone());
+                                                    return Some(*ui_id);
                                                 }
                                                 operation::Outcome::Chain(
                                                     next,
@@ -1788,7 +1787,7 @@ async fn run_instance<P>(
                                 };
 
                                 // search windows for widget with operation
-                                 
+
                                 if result.is_none() {
                                     log::warn!(
                                         "start_dnd: widget {:?} not found; drag will fail",
@@ -1814,7 +1813,8 @@ async fn run_instance<P>(
                         let mut icon_surface =
                             i.downcast::<P::Theme, P::Renderer>();
 
-                        let mut renderer = compositor.create_renderer(renderer_settings);
+                        let mut renderer =
+                            compositor.create_renderer(renderer_settings);
 
                         let lim = core::layout::Limits::new(
                             Size::new(1., 1.),
@@ -1857,7 +1857,7 @@ async fn run_instance<P>(
                             user_interface::Cache::default(),
                             &mut renderer,
                         );
-                        _ = ui.draw(
+                        ui.draw(
                             &mut renderer,
                             state.theme(),
                             &renderer::Style {
@@ -1865,7 +1865,7 @@ async fn run_instance<P>(
                                 text_color: state.text_color(),
                                 scale_factor: state.scale_factor(),
                             },
-                            Default::default(),
+                            mouse::Cursor::default(),
                         );
                         let mut bytes = compositor.screenshot(
                             &mut renderer,
@@ -2085,8 +2085,11 @@ where
 
                 // Run immediately available actions synchronously (e.g. widget operations)
                 loop {
-                    match runtime.enter(|| stream.poll_next_unpin(&mut context)) {
-                        futures::task::Poll::Ready(Some(Action::Output(output))) => {
+                    match runtime.enter(|| stream.poll_next_unpin(&mut context))
+                    {
+                        futures::task::Poll::Ready(Some(Action::Output(
+                            output,
+                        ))) => {
                             outputs.push(output);
                         }
                         futures::task::Poll::Ready(Some(action)) => {
@@ -2156,7 +2159,7 @@ where
                 clipboard.write(target, contents);
             }
             clipboard::Action::WriteData(contents, kind) => {
-                clipboard.write_data(kind, ClipboardStoreData(contents))
+                clipboard.write_data(kind, ClipboardStoreData(contents));
             }
             clipboard::Action::ReadData(allowed, tx, kind) => {
                 let contents = clipboard.read_data(kind, allowed);
@@ -2177,7 +2180,7 @@ where
                         on_open: channel,
                     })
                     .expect("Send control action");
-                
+
                 *is_window_opening = true;
             }
             window::Action::Close(id) => {
@@ -2471,8 +2474,7 @@ where
                         .and_then(|m| m.current_video_mode())
                         .map(|monitor| {
                             let scale = window.state.scale_factor();
-                            let size =
-                                monitor.size().to_logical(f64::from(scale));
+                            let size = monitor.size().to_logical(scale);
 
                             Size::new(size.width, size.height)
                         });
@@ -2589,7 +2591,8 @@ where
 
                 // Recreate renderers and relayout all windows
                 for (id, window) in window_manager.iter_mut() {
-                    window.renderer = compositor.create_renderer(*renderer_settings);
+                    window.renderer =
+                        compositor.create_renderer(*renderer_settings);
 
                     let Some(ui) = interfaces.remove(&id) else {
                         continue;

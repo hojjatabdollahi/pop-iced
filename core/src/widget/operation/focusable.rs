@@ -145,7 +145,7 @@ where
                 Some(0) if self.current == 0 && self.count.total == 1 => {}
                 Some(0) if self.current == 0 => state.unfocus(),
                 Some(0) if self.current == self.count.total - 1 => {
-                    state.focus()
+                    state.focus();
                 }
                 Some(0) => {}
                 Some(focused) if focused == self.current => state.unfocus(),
@@ -192,7 +192,7 @@ where
                 Some(focused)
                     if focused == self.count.total - 1 && self.current == 0 =>
                 {
-                    state.focus()
+                    state.focus();
                 }
                 _ => {}
             }

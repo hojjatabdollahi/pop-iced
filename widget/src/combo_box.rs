@@ -64,8 +64,10 @@ use crate::core::renderer;
 use crate::core::text;
 use crate::core::time::Instant;
 use crate::core::widget::{self, Widget};
-use crate::core::{Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size,
-    Theme, Vector};
+use crate::core::{
+    Element, Event, Length, Padding, Pixels, Rectangle, Shell, Size, Theme,
+    Vector,
+};
 use crate::overlay::menu;
 use crate::text::LineHeight;
 use crate::text_input::{self, TextInput};

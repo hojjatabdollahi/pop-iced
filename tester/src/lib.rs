@@ -467,7 +467,8 @@ impl<P: Program + 'static> Tester<P> {
                             *current += 1;
 
                             if let Some(instruction) =
-                            self.instructions.get(*current - 1) {
+                                self.instructions.get(*current - 1)
+                            {
                                 emulator.run(program, instruction);
                             }
 
@@ -587,7 +588,9 @@ impl<P: Program + 'static> Tester<P> {
                             State::Playing { outcome, .. } => match outcome {
                                 Outcome::Running => palette.primary.base.color,
                                 Outcome::Failed => palette.danger.base.color,
-                                Outcome::Success => palette.success.strong.color,
+                                Outcome::Success => {
+                                    palette.success.strong.color
+                                }
                             },
                         }),
                         ..container::Style::default()
@@ -737,17 +740,35 @@ impl<P: Program + 'static> Tester<P> {
                                             if *current == i + 1 {
                                                 Some(match outcome {
                                                     Outcome::Running => {
-                                                        theme.palette().primary.base.color
+                                                        theme
+                                                            .palette()
+                                                            .primary
+                                                            .base
+                                                            .color
                                                     }
                                                     Outcome::Failed => {
-                                                        theme.palette().danger.strong.color
+                                                        theme
+                                                            .palette()
+                                                            .danger
+                                                            .strong
+                                                            .color
                                                     }
                                                     Outcome::Success => {
-                                                        theme.palette().success.strong.color
+                                                        theme
+                                                            .palette()
+                                                            .success
+                                                            .strong
+                                                            .color
                                                     }
                                                 })
                                             } else if *current > i + 1 {
-                                                Some(theme.palette().success.strong.color)
+                                                Some(
+                                                    theme
+                                                        .palette()
+                                                        .success
+                                                        .strong
+                                                        .color,
+                                                )
                                             } else {
                                                 None
                                             }

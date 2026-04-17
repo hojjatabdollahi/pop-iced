@@ -449,16 +449,20 @@ impl Seed {
 }
 
 /// The built-in light variant of a [`Palette`].
-pub static LIGHT: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::LIGHT));
+pub static LIGHT: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::LIGHT));
 
 /// The built-in dark variant of a [`Palette`].
-pub static DARK: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::DARK));
+pub static DARK: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::DARK));
 
 /// The built-in Dracula variant of a [`Palette`].
-pub static DRACULA: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::DRACULA));
+pub static DRACULA: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::DRACULA));
 
 /// The built-in Nord variant of a [`Palette`].
-pub static NORD: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::NORD));
+pub static NORD: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::NORD));
 
 /// The built-in Solarized Light variant of a [`Palette`].
 pub static SOLARIZED_LIGHT: LazyLock<Palette> =
@@ -493,7 +497,8 @@ pub static CATPPUCCIN_MOCHA: LazyLock<Palette> =
     LazyLock::new(|| Palette::generate(Seed::CATPPUCCIN_MOCHA));
 
 /// The built-in Tokyo Night variant of a [`Palette`].
-pub static TOKYO_NIGHT: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::TOKYO_NIGHT));
+pub static TOKYO_NIGHT: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::TOKYO_NIGHT));
 
 /// The built-in Tokyo Night Storm variant of a [`Palette`].
 pub static TOKYO_NIGHT_STORM: LazyLock<Palette> =
@@ -516,16 +521,20 @@ pub static KANAGAWA_LOTUS: LazyLock<Palette> =
     LazyLock::new(|| Palette::generate(Seed::KANAGAWA_LOTUS));
 
 /// The built-in Moonfly variant of a [`Palette`].
-pub static MOONFLY: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::MOONFLY));
+pub static MOONFLY: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::MOONFLY));
 
 /// The built-in Nightfly variant of a [`Palette`].
-pub static NIGHTFLY: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::NIGHTFLY));
+pub static NIGHTFLY: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::NIGHTFLY));
 
 /// The built-in Oxocarbon variant of a [`Palette`].
-pub static OXOCARBON: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::OXOCARBON));
+pub static OXOCARBON: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::OXOCARBON));
 
 /// The built-in Ferra variant of a [`Palette`].
-pub static FERRA: LazyLock<Palette> = LazyLock::new(|| Palette::generate(Seed::FERRA));
+pub static FERRA: LazyLock<Palette> =
+    LazyLock::new(|| Palette::generate(Seed::FERRA));
 
 /// Darkens a [`Color`] by the given factor.
 pub fn darken(color: Color, amount: f32) -> Color {

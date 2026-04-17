@@ -35,8 +35,8 @@ pub use crate::slider::{
     default,
 };
 
-use crate::core::clipboard::Clipboard;
 use crate::core::border::Border;
+use crate::core::clipboard::Clipboard;
 use crate::core::keyboard;
 use crate::core::keyboard::key::{self, Key};
 use crate::core::layout::{self, Layout};
@@ -45,8 +45,9 @@ use crate::core::renderer;
 use crate::core::touch;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
-use crate::core::{self, Element, Event, Length, Pixels, Point, Rectangle, Shell,
-    Size, Widget};
+use crate::core::{
+    self, Element, Event, Length, Pixels, Point, Rectangle, Shell, Size, Widget,
+};
 
 /// An vertical bar and a handle that selects a single value from a range of
 /// values.
@@ -252,7 +253,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
-        clipboard: &mut dyn Clipboard,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {
@@ -366,13 +367,13 @@ where
             | Event::Touch(touch::Event::FingerMoved { .. })
                 if is_dragging =>
             {
-                let _ =
-                    cursor.land().position().and_then(locate).map(change);
+                let _ = cursor.land().position().and_then(locate).map(change);
 
                 shell.capture_event();
             }
             Event::Mouse(mouse::Event::WheelScrolled { delta })
-                if state.keyboard_modifiers.control() && cursor.is_over(layout.bounds()) =>
+                if state.keyboard_modifiers.control()
+                    && cursor.is_over(layout.bounds()) =>
             {
                 let delta = match *delta {
                     mouse::ScrollDelta::Lines { x: _, y } => y,

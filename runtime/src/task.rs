@@ -41,9 +41,9 @@ impl<T> Task<T> {
         T: MaybeSend + 'static,
     {
         Self {
-            stream: Some(boxed_stream(stream::once(future::ready(Action::Output(
-                value,
-            ))))),
+            stream: Some(boxed_stream(stream::once(future::ready(
+                Action::Output(value),
+            )))),
             units: 0,
         }
     }

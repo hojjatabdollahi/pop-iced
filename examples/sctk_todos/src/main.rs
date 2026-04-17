@@ -1,5 +1,8 @@
 use env_logger::Env;
 use iced::alignment::{self, Alignment};
+use iced::core::keyboard;
+use iced::core::keyboard::key::Named;
+use iced::core::layout::Limits;
 use iced::event::{self, listen_raw, Event};
 use iced::platform_specific::shell::commands::{
     layer_surface::{get_layer_surface, Anchor},
@@ -7,15 +10,12 @@ use iced::platform_specific::shell::commands::{
 };
 use iced::theme::{self, Theme};
 use iced::widget::{
-    self, button, checkbox, column, container, operation, row, scrollable, text,
-    text_input, Text,
+    self, button, checkbox, column, container, operation, row, scrollable,
+    text, text_input, Text,
 };
 use iced::window::Settings;
 use iced::{window, Application, Element, Program, Task};
 use iced::{Color, Font, Length, Subscription};
-use iced::core::keyboard::key::Named;
-use iced::core::layout::Limits;
-use iced::core::keyboard;
 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
