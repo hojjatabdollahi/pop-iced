@@ -28,7 +28,7 @@ wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
 # Enables the `tiny-skia` software renderer
 
 
-default = ["a11y", "tiny-skia", "tokio", "wayland", "x11", "hinting"]
+default = ["a11y", "tiny-skia", "tokio", "wayland", "x11", "hinting", "winit"]
 # Enable the `tiny-skia` software renderer backend
 tiny-skia = ["iced_renderer/tiny-skia"]
 # Enables the `image` widget and image clipboard support
