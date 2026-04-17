@@ -1427,6 +1427,7 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
 [[package]]
 name = "cryoglyph"
 version = "0.1.0"
+source = "git+http://github.com/hojjatabdollahi/cryoglyph?branch=nightly#282757b34591eb3b4ec568f6a9462fc95be672b5"
 dependencies = [
  "cosmic-text",
  "etagere",

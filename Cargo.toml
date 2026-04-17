@@ -249,7 +249,7 @@ bytes = "1.6"
 cosmic-text = { git = "https://github.com/pop-os/cosmic-text.git" }
 # cosmic-text = "0.10"
 dark-light = "1.0"
-cryoglyph = { path = "../../glyphon" }
+cryoglyph = { git = "http://github.com/hojjatabdollahi/cryoglyph", branch = "nightly" }
 resvg = "0.45"
 web-sys = "=0.3.85"
 guillotiere = "0.6"
