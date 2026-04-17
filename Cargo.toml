@@ -32,7 +32,7 @@ default = ["a11y", "tiny-skia", "tokio", "wayland", "x11", "hinting"]
 # Enable the `tiny-skia` software renderer backend
 tiny-skia = ["iced_renderer/tiny-skia"]
 # Enables the `image` widget and image clipboard support
-image = ["image-without-codecs", "image/default", "iced_winit/image"]
+image = ["image-without-codecs", "image/default"]
 # Enables the `image` widget, without any built-in codecs of the `image` crate
 image-without-codecs = ["iced_widget/image", "dep:image"]
 # Enables the `svg` widget

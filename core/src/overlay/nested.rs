@@ -4,7 +4,7 @@ use crate::mouse;
 use crate::overlay;
 use crate::renderer;
 use crate::widget;
-use crate::{Event, Layout, Shell, Size};
+use crate::{Clipboard, Event, Layout, Shell, Size};
 
 /// An overlay container that displays nested overlays
 pub struct Nested<'a, Message, Theme, Renderer> {
@@ -170,6 +170,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         fn recurse<Message, Theme, Renderer>(
@@ -178,6 +179,7 @@ where
             event: &Event,
             cursor: mouse::Cursor,
             renderer: &Renderer,
+            clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
         ) -> bool
         where
@@ -191,7 +193,15 @@ where
                 let nested_is_over = if let Some((mut nested, nested_layout)) =
                     overlay.overlay(layout, renderer).zip(layouts.next())
                 {
-                    recurse(&mut nested, nested_layout, event, cursor, renderer, shell)
+                    recurse(
+                        &mut nested,
+                        nested_layout,
+                        event,
+                        cursor,
+                        renderer,
+                        clipboard,
+                        shell,
+                    )
                 } else {
                     false
                 };
@@ -218,6 +228,7 @@ where
                             cursor
                         },
                         renderer,
+                        clipboard,
                         shell,
                     );
 
@@ -230,7 +241,15 @@ where
             }
         }
 
-        let _ = recurse(&mut self.overlay, layout, event, cursor, renderer, shell);
+        let _ = recurse(
+            &mut self.overlay,
+            layout,
+            event,
+            cursor,
+            renderer,
+            clipboard,
+            shell,
+        );
     }
 
     /// Returns the current [`mouse::Interaction`] of the [`Nested`] overlay.
