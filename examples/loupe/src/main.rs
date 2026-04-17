@@ -89,7 +89,7 @@ mod loupe {
         }
 
         fn diff(&mut self, tree: &mut widget::Tree) {
-            self.content.as_widget().diff(tree);
+            self.content.as_widget_mut().diff(tree);
         }
 
         fn size(&self) -> Size<Length> {
@@ -112,6 +112,7 @@ mod loupe {
             layout: Layout<'_>,
             cursor: mouse::Cursor,
             _renderer: &Renderer,
+            _clipboard: &mut dyn iced::advanced::clipboard::Clipboard,
             shell: &mut Shell<'_, Message>,
             _viewport: &Rectangle,
         ) {
