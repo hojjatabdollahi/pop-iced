@@ -701,6 +701,7 @@ impl Renderer {
                         shaping: core::text::Shaping::Advanced,
                         wrapping: core::text::Wrapping::Word,
                         ellipsize: core::text::Ellipsize::None,
+                        hint_factor: None,
                     };
 
                     renderer.fill_text(

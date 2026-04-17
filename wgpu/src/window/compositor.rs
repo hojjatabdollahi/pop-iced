@@ -173,6 +173,7 @@ impl Compositor {
         } else if let Ok(name) = std::env::var("WGPU_ADAPTER_NAME") {
             adapter = instance
                 .enumerate_adapters(settings.backends)
+                .await
                 .into_iter()
                 .filter(|adapter| {
                     let info = adapter.get_info();
