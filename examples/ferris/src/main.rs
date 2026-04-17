@@ -85,7 +85,7 @@ impl Image {
 
     fn subscription(&self) -> Subscription<Message> {
         if self.spin {
-            window::frames().map(Message::RedrawRequested)
+            window::frames().map(|(_, instant)| Message::RedrawRequested(instant))
         } else {
             Subscription::none()
         }

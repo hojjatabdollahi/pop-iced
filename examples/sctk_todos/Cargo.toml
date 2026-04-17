@@ -10,10 +10,10 @@ iced.workspace = true
 iced.features = [
     "tokio",
     "wayland",
+    "cctk",
     "winit",
     "debug",
     "tiny-skia",
-    "a11y",
     "wgpu",
 ]
 # iced.features = ["async-std", "wayland", "debug", "wayland-clipboard", "a11y", "tiny-skia"]

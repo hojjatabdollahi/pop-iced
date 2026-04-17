@@ -17,14 +17,25 @@ use iced::{
     futures::{FutureExt, SinkExt},
     platform_specific::shell::subsurface_widget::{Shmbuf, SubsurfaceBuffer},
 };
-use iced_runtime::futures::subscription;
 use rustix::{io::Errno, shm::ShmOFlags};
 use std::{
-    os::fd::OwnedFd,
+    hash::{Hash, Hasher},
+    os::{fd::OwnedFd, unix::io::AsRawFd},
     sync::Arc,
     thread,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
+
+/// Wrapper around [`Connection`] that implements [`Hash`] via the poll fd.
+#[derive(Clone)]
+struct HashableConnection(Connection);
+
+impl Hash for HashableConnection {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        use std::os::unix::io::AsFd;
+        self.0.as_fd().as_raw_fd().hash(state);
+    }
+}
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -52,11 +63,10 @@ impl ShmHandler for AppData {
 }
 
 pub fn subscription(connection: &Connection) -> iced::Subscription<Event> {
-    let connection = connection.clone();
-    subscription::Subscription::run_with_id(
-        "wayland-sub",
-        async { start(connection).await }.flatten_stream(),
-    )
+    iced::Subscription::run_with(HashableConnection(connection.clone()), |conn| {
+        let conn = conn.0.clone();
+        async move { start(conn).await }.flatten_stream()
+    })
 }
 
 async fn start(conn: Connection) -> mpsc::Receiver<Event> {

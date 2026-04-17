@@ -66,6 +66,7 @@ impl Example {
                 size: None,
                 line_height: text::LineHeight::Relative(1.0),
                 shaping: text::Shaping::Basic,
+                wrap: text::Wrapping::default(),
             });
 
         let content =

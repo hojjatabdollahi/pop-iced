@@ -8,9 +8,10 @@ use iced::{
 };
 
 fn main() -> iced::Result {
-    iced::daemon(Locker::title, Locker::update, Locker::view)
+    iced::daemon(Locker::new, Locker::update, Locker::view)
+        .title(Locker::title)
         .subscription(Locker::subscription)
-        .run_with(Locker::new)
+        .run()
 }
 
 #[derive(Debug, Clone, Default)]
@@ -55,7 +56,7 @@ impl Locker {
                 WaylandEvent::SessionLock(evt) => match evt {
                     SessionLockEvent::Locked => {
                         return iced::Task::perform(
-                            async_std::task::sleep(
+                            tokio::time::sleep(
                                 std::time::Duration::from_secs(5),
                             ),
                             |_| Message::TimeUp,

@@ -119,7 +119,7 @@ winit = [
   "iced_program/winit",
 ]
 wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
-cctk = ["iced_winit/cctk", "iced_widget/cctk", "iced_core/cctk", "wayland"]
+cctk = ["iced_winit/cctk", "iced_widget/cctk", "iced_core/cctk", "iced_runtime/cctk", "wayland"]
 # Enables the sctk shell. 
 [dependencies]
 

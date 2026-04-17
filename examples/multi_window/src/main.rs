@@ -1,6 +1,6 @@
 use iced::widget::{
-    button, center, center_x, column, container, operation, scrollable, space,
-    text, text_input,
+    self, button, center, center_x, column, container, operation, scrollable,
+    space, text, text_input,
 };
 use iced::window;
 use iced::{
@@ -28,7 +28,7 @@ struct Window {
     scale_input: String,
     current_scale: f32,
     theme: Theme,
-    input_id: text_input::Id,
+    input_id: widget::Id,
 }
 
 #[derive(Debug, Clone)]
@@ -143,10 +143,10 @@ impl Example {
         Some(self.windows.get(&window)?.theme.clone())
     }
 
-    fn scale_factor(&self, window: window::Id) -> f32 {
+    fn scale_factor(&self, window: window::Id) -> f64 {
         self.windows
             .get(&window)
-            .map(|window| window.current_scale)
+            .map(|window| window.current_scale as f64)
             .unwrap_or(1.0)
     }
 
@@ -162,7 +162,7 @@ impl Window {
             scale_input: "1.0".to_string(),
             current_scale: 1.0,
             theme: Theme::ALL[count % Theme::ALL.len()].clone(),
-            input_id: text_input::Id::unique(),
+            input_id: widget::Id::unique(),
         }
     }
 

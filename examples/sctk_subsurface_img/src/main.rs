@@ -29,12 +29,13 @@ fn main() -> iced::Result {
     }
 
     iced::daemon(
-        SubsurfaceApp::title,
+        move || SubsurfaceApp::new(path.clone()),
         SubsurfaceApp::update,
         SubsurfaceApp::view,
     )
+    .title(SubsurfaceApp::title)
     .subscription(SubsurfaceApp::subscription)
-    .run_with(|| SubsurfaceApp::new(path))
+    .run()
 }
 
 #[derive(Debug, Clone)]
@@ -124,9 +125,9 @@ impl SubsurfaceApp {
                 key,
                 ..
             }) => match key {
-                iced::keyboard::Key::Character(
-                    " ".into()
-                ) => Some(Message::Toggle),
+                iced::keyboard::Key::Character(c) if c.as_str() == " " => {
+                    Some(Message::Toggle)
+                }
                 _ => None,
             },
             _ => None,

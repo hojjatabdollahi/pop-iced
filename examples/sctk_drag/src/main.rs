@@ -19,13 +19,8 @@ use iced_core::{
 };
 
 fn main() -> iced::Result {
-    iced::daemon(DndTest::title, DndTest::update, DndTest::view)
-        .run_with(DndTest::new)
-    // iced::application(Todos::title, Todos::update, Todos::view)
-    // .subscription(Todos::subscription)
-    // .font(include_bytes!("../fonts/icons.ttf").as_slice())
-    // .window_size((500.0, 800.0))
-    // .run_with(Todos::new)
+    iced::daemon(DndTest::new, DndTest::update, DndTest::view)
+        .run()
 }
 
 const SUPPORTED_MIME_TYPES: &'static [&'static str; 6] = &[

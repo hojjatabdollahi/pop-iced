@@ -11,10 +11,11 @@ iced = { path = "../..", default-features = false, features = [
     "winit",
     "debug",
     "tiny-skia",
+    "cctk",
 ] }
 iced_runtime = { path = "../../runtime" }
 env_logger = "0.10"
 futures-channel = "0.3.29"
-calloop = "0.13"
+calloop = "0.14"
 rustix = { version = "0.38.30", features = ["fs", "shm"] }
 cctk.workspace = true

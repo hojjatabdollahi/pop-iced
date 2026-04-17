@@ -127,7 +127,7 @@ impl IcedCubes {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        window::frames().map(Message::Tick)
+        window::frames().map(|(_, instant)| Message::Tick(instant))
     }
 }
 

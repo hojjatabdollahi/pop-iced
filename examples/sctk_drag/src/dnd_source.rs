@@ -9,7 +9,8 @@ use iced::{
     event, mouse, overlay,
 };
 use iced_core::{
-    Clipboard, Shell, layout, renderer,
+    Clipboard, Shell, Vector, layout, renderer,
+    clipboard::IconSurface,
     widget::{Tree, tree},
 };
 use iced_core::{Layout, Widget};
@@ -17,31 +18,28 @@ use iced_core::{Layout, Widget};
 pub fn dnd_source<
     'a,
     Message: 'static,
-    AppMessage: 'static,
     D: iced::clipboard::mime::AsMimeTypes + Send + 'static,
 >(
     child: impl Into<Element<'a, Message>>,
-) -> DndSource<'a, Message, AppMessage, D> {
+) -> DndSource<'a, Message, D> {
     DndSource::new(child)
 }
 
-pub struct DndSource<'a, Message, AppMessage, D> {
+pub struct DndSource<'a, Message, D> {
     id: Id,
     action: DndAction,
     container: Element<'a, Message>,
     drag_content: Option<Box<dyn Fn() -> D>>,
     drag_icon:
-        Option<Box<dyn Fn() -> (Element<'static, AppMessage>, tree::State)>>,
+        Option<Box<dyn Fn() -> (Element<'static, ()>, tree::State)>>,
     drag_threshold: f32,
-    _phantom: std::marker::PhantomData<AppMessage>,
 }
 
 impl<
     'a,
     Message: 'static,
-    AppMessage: 'static,
     D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
-> DndSource<'a, Message, AppMessage, D>
+> DndSource<'a, Message, D>
 {
     pub fn new(child: impl Into<Element<'a, Message>>) -> Self {
         Self {
@@ -51,7 +49,6 @@ impl<
             drag_content: None,
             drag_icon: None,
             drag_threshold: 8.0,
-            _phantom: std::marker::PhantomData,
         }
     }
 
@@ -63,7 +60,6 @@ impl<
             drag_content: None,
             drag_icon: None,
             drag_threshold: 8.0,
-            _phantom: std::marker::PhantomData,
         }
     }
 
@@ -82,7 +78,7 @@ impl<
     #[must_use]
     pub fn drag_icon(
         mut self,
-        f: impl Fn() -> (Element<'static, AppMessage>, tree::State) + 'static,
+        f: impl Fn() -> (Element<'static, ()>, tree::State) + 'static,
     ) -> Self {
         self.drag_icon = Some(Box::new(f));
         self
@@ -104,12 +100,13 @@ impl<
             Some(iced_core::clipboard::DndSource::Widget(self.id.clone())),
             self.drag_icon.as_ref().map(|f| {
                 let (icon, state) = f();
-                (
+                IconSurface::new(
                     container(icon)
                         .width(Length::Fixed(bounds.width))
                         .height(Length::Fixed(bounds.height))
                         .into(),
                     state,
+                    Vector::ZERO,
                 )
             }),
             Box::new(content),
@@ -121,10 +118,9 @@ impl<
 impl<
     'a,
     Message: 'static,
-    AppMessage: 'static,
     D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
 > Widget<Message, iced::Theme, iced::Renderer>
-    for DndSource<'a, Message, AppMessage, D>
+    for DndSource<'a, Message, D>
 {
     fn children(&self) -> Vec<Tree> {
         vec![Tree::new(&self.container)]
@@ -147,13 +143,13 @@ impl<
     }
 
     fn layout(
-        &self,
+        &mut self,
         tree: &mut Tree,
         renderer: &iced::Renderer,
         limits: &layout::Limits,
     ) -> layout::Node {
         let state = tree.state.downcast_mut::<State>();
-        let node = self.container.as_widget().layout(
+        let node = self.container.as_widget_mut().layout(
             &mut tree.children[0],
             renderer,
             limits,
@@ -163,41 +159,38 @@ impl<
     }
 
     fn operate(
-        &self,
+        &mut self,
         tree: &mut Tree,
         layout: layout::Layout<'_>,
         renderer: &iced::Renderer,
-        operation: &mut dyn iced_core::widget::Operation<()>,
+        operation: &mut dyn iced_core::widget::Operation,
     ) {
-        operation.custom((&mut tree.state) as &mut dyn Any, Some(&self.id));
-        operation.container(
-            Some(&self.id),
-            layout.bounds(),
-            &mut |operation| {
-                self.container.as_widget().operate(
-                    &mut tree.children[0],
-                    layout,
-                    renderer,
-                    operation,
-                )
-            },
-        );
+        operation.custom(Some(&self.id), layout.bounds(), (&mut tree.state) as &mut dyn Any);
+        operation.container(Some(&self.id), layout.bounds());
+        operation.traverse(&mut |operation| {
+            self.container.as_widget_mut().operate(
+                &mut tree.children[0],
+                layout,
+                renderer,
+                operation,
+            );
+        });
     }
 
     fn update(
         &mut self,
         tree: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: layout::Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &iced::Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        let ret = self.container.as_widget_mut().on_event(
+    ) {
+        self.container.as_widget_mut().update(
             &mut tree.children[0],
-            event.clone(),
+            event,
             layout,
             cursor,
             renderer,
@@ -213,7 +206,7 @@ impl<
                 mouse::Event::ButtonPressed(mouse::Button::Left) => {
                     if let Some(position) = cursor.position() {
                         if !state.hovered {
-                            return ret;
+                            return;
                         }
 
                         state.left_pressed_position = Some(position);
@@ -234,7 +227,7 @@ impl<
                             // We ignore motion if we do not possess drag content by now.
                             if self.drag_content.is_none() {
                                 state.left_pressed_position = None;
-                                return ret;
+                                return;
                             }
                             if let Some(left_pressed_position) =
                                 state.left_pressed_position
@@ -253,7 +246,7 @@ impl<
                             if !cursor.is_over(layout.bounds()) {
                                 state.hovered = false;
 
-                                return ret;
+                                return;
                             }
                         } else if cursor.is_over(layout.bounds()) {
                             state.hovered = true;
@@ -262,7 +255,7 @@ impl<
                         return;
                     }
                 }
-                _ => return ret,
+                _ => return,
             },
             Event::Dnd(DndEvent::Source(
                 SourceEvent::Cancelled | SourceEvent::Finished,
@@ -272,11 +265,10 @@ impl<
                     shell.capture_event();
                     return;
                 }
-                return ret;
+                return;
             }
-            _ => return ret,
+            _ => return,
         }
-        ret
     }
 
     fn mouse_interaction(
@@ -326,6 +318,7 @@ impl<
         tree: &'b mut Tree,
         layout: Layout<'_>,
         renderer: &iced::Renderer,
+        _viewport: &Rectangle,
         translation: iced::Vector,
     ) -> Option<overlay::Element<'b, Message, iced::Theme, iced::Renderer>>
     {
@@ -359,11 +352,10 @@ impl<
 impl<
     'a,
     Message: 'static,
-    AppMessage: 'static,
     D: iced::clipboard::mime::AsMimeTypes + std::marker::Send + 'static,
-> From<DndSource<'a, Message, AppMessage, D>> for Element<'a, Message>
+> From<DndSource<'a, Message, D>> for Element<'a, Message>
 {
-    fn from(e: DndSource<'a, Message, AppMessage, D>) -> Element<'a, Message> {
+    fn from(e: DndSource<'a, Message, D>) -> Element<'a, Message> {
         Element::new(e)
     }
 }

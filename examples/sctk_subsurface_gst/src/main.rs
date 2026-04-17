@@ -21,12 +21,13 @@ fn main() -> iced::Result {
         return Ok(());
     }
     iced::daemon(
-        SubsurfaceApp::title,
+        move || SubsurfaceApp::new(path.clone()),
         SubsurfaceApp::update,
         SubsurfaceApp::view,
     )
+    .title(SubsurfaceApp::title)
     .subscription(SubsurfaceApp::subscription)
-    .run_with(|| SubsurfaceApp::new(path))
+    .run()
 }
 
 #[derive(Debug, Clone, Default)]

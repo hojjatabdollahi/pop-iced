@@ -11,6 +11,7 @@ iced = { path = "../..", default-features = false, features = [
     "debug",
     "tiny-skia",
     "image",
+    "cctk",
 ] }
 iced_runtime = { path = "../../runtime" }
 env_logger = "0.10"

@@ -12,6 +12,7 @@ iced = { path = "../..", default-features = false, features = [
     "tokio",
     "winit",
     "wayland",
+    "cctk",
     "debug",
 ] }
 env_logger = "0.10"

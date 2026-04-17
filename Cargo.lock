@@ -5771,18 +5771,18 @@ dependencies = [
 name = "sctk_session_lock"
 version = "0.1.0"
 dependencies = [
- "async-std",
  "env_logger",
  "iced",
  "iced_runtime",
  "smithay-client-toolkit 0.18.0",
+ "tokio",
 ]
 
 [[package]]
 name = "sctk_subsurface"
 version = "0.1.0"
 dependencies = [
- "calloop 0.13.0",
+ "calloop 0.14.4",
  "cosmic-client-toolkit",
  "env_logger",
  "futures-channel",
@@ -5795,7 +5795,6 @@ dependencies = [
 name = "sctk_subsurface_gst"
 version = "0.1.0"
 dependencies = [
- "calloop 0.12.4",
  "drm-fourcc",
  "env_logger",
  "futures-channel",
@@ -5805,7 +5804,6 @@ dependencies = [
  "gstreamer-video",
  "iced",
  "iced_runtime",
- "smithay-client-toolkit 0.18.0",
 ]
 
 [[package]]

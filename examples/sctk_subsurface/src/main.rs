@@ -23,12 +23,13 @@ mod wayland;
 
 fn main() -> iced::Result {
     iced::daemon(
-        SubsurfaceApp::title,
+        SubsurfaceApp::new,
         SubsurfaceApp::update,
         SubsurfaceApp::view,
     )
+    .title(SubsurfaceApp::title)
     .subscription(SubsurfaceApp::subscription)
-    .run_with(SubsurfaceApp::new)
+    .run()
 }
 
 #[derive(Debug, Clone, Default)]

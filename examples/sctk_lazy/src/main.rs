@@ -5,8 +5,7 @@ use iced::platform_specific::shell::commands::layer_surface::{
 };
 
 use iced::widget::{
-    button, column, horizontal_space, lazy, pick_list, row, scrollable, text,
-    text_input,
+    button, column, lazy, pick_list, row, scrollable, space, text, text_input,
 };
 use iced::window::Id;
 use iced::Task;
@@ -16,7 +15,9 @@ use std::collections::HashSet;
 use std::hash::Hash;
 
 pub fn main() -> iced::Result {
-    iced::daemon(App::title, App::update, App::view).run_with(App::new)
+    iced::daemon(App::new, App::update, App::view)
+        .title(App::title)
+        .run()
 }
 
 struct App {
@@ -198,8 +199,13 @@ impl App {
 
                 row![
                     text(item.name.clone()),
-                    horizontal_space(),
-                    pick_list(Color::ALL, Some(item.color), move |color| {
+                    space().width(Length::Fill),
+                    pick_list(
+                        Some(item.color),
+                        Color::ALL,
+                        |c: &Color| c.to_string(),
+                    )
+                    .on_select(move |color| {
                         Message::ItemColorChanged(item.clone(), color)
                     }),
                     button
@@ -227,7 +233,7 @@ impl App {
     }
 
     fn theme(&self) -> iced::Theme {
-        iced::Theme::default()
+        iced::Theme::Light
     }
 
     fn scale_factor(&self) -> f64 {

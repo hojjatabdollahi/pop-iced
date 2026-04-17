@@ -10,6 +10,7 @@ iced = { path = "../..", features = [
     "debug",
     "lazy",
     "wayland",
+    "cctk",
     "winit",
     "tokio",
     "tiny-skia",

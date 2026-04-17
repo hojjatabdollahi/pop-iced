@@ -99,6 +99,7 @@ impl Gradient {
             theme::Style {
                 background_color: Color::TRANSPARENT,
                 text_color: theme.seed().text,
+                icon_color: theme.seed().text,
             }
         } else {
             theme::default(theme)

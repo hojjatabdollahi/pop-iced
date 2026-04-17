@@ -41,8 +41,8 @@ impl Example {
                 Task::none()
             }
             Message::Scrolled | Message::WindowResized => Task::batch(vec![
-                selector::find(OUTER_CONTAINER).map(Message::OuterFound),
-                selector::find(INNER_CONTAINER).map(Message::InnerFound),
+                selector::find(OUTER_CONTAINER.clone()).map(Message::OuterFound),
+                selector::find(INNER_CONTAINER.clone()).map(Message::InnerFound),
             ]),
             Message::OuterFound(outer) => {
                 self.outer_bounds =
@@ -113,7 +113,7 @@ impl Example {
                     text("Scroll me!"),
                     space().height(400),
                     container(text("I am the outer container!"))
-                        .id(OUTER_CONTAINER)
+                        .id(OUTER_CONTAINER.clone())
                         .padding(40)
                         .style(container::rounded_box),
                     space().height(400),
@@ -122,7 +122,7 @@ impl Example {
                             text("Scroll me!"),
                             space().height(400),
                             container(text("I am the inner container!"))
-                                .id(INNER_CONTAINER)
+                                .id(INNER_CONTAINER.clone())
                                 .padding(40)
                                 .style(container::rounded_box),
                             space().height(400),
@@ -157,5 +157,7 @@ impl Example {
     }
 }
 
-const OUTER_CONTAINER: widget::Id = widget::Id::new("outer");
-const INNER_CONTAINER: widget::Id = widget::Id::new("inner");
+static OUTER_CONTAINER: std::sync::LazyLock<widget::Id> =
+    std::sync::LazyLock::new(|| widget::Id::new("outer"));
+static INNER_CONTAINER: std::sync::LazyLock<widget::Id> =
+    std::sync::LazyLock::new(|| widget::Id::new("inner"));

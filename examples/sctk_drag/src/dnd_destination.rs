@@ -290,12 +290,12 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
     }
 
     fn layout(
-        &self,
+        &mut self,
         tree: &mut Tree,
         renderer: &iced::Renderer,
         limits: &layout::Limits,
     ) -> layout::Node {
-        self.container.as_widget().layout(
+        self.container.as_widget_mut().layout(
             &mut tree.children[0],
             renderer,
             limits,
@@ -303,13 +303,13 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
     }
 
     fn operate(
-        &self,
+        &mut self,
         tree: &mut Tree,
         layout: layout::Layout<'_>,
         renderer: &iced::Renderer,
-        operation: &mut dyn iced_core::widget::Operation<()>,
+        operation: &mut dyn iced_core::widget::Operation,
     ) {
-        self.container.as_widget().operate(
+        self.container.as_widget_mut().operate(
             &mut tree.children[0],
             layout,
             renderer,
@@ -321,17 +321,17 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
     fn update(
         &mut self,
         tree: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: layout::Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &iced::Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
-        let s = self.container.as_widget_mut().on_event(
+    ) {
+        self.container.as_widget_mut().update(
             &mut tree.children[0],
-            event.clone(),
+            event,
             layout,
             cursor,
             renderer,
@@ -339,8 +339,7 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
             shell,
             viewport,
         );
-        if matches!(s, event::Status::Captured) {
-            shell.capture_event();
+        if shell.is_event_captured() {
             return;
         }
 
@@ -354,11 +353,11 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                 OfferEvent::Enter {
                     x, y, mime_types, ..
                 },
-            )) if id == Some(my_id) => {
+            )) if *id == Some(my_id) => {
                 if let Some(msg) = state.on_enter(
-                    x,
-                    y,
-                    mime_types,
+                    *x,
+                    *y,
+                    mime_types.clone(),
                     self.on_enter.as_ref().map(std::convert::AsRef::as_ref),
                     (),
                 ) {
@@ -367,13 +366,13 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                 if self.forward_drag_as_cursor {
                     #[allow(clippy::cast_possible_truncation)]
                     let drag_cursor =
-                        mouse::Cursor::Available((x as f32, y as f32).into());
-                    let event = Event::Mouse(mouse::Event::CursorMoved {
+                        mouse::Cursor::Available((*x as f32, *y as f32).into());
+                    let fwd_event = Event::Mouse(mouse::Event::CursorMoved {
                         position: drag_cursor.position().unwrap(),
                     });
-                    self.container.as_widget_mut().on_event(
+                    self.container.as_widget_mut().update(
                         &mut tree.children[0],
-                        event,
+                        &fwd_event,
                         layout,
                         drag_cursor,
                         renderer,
@@ -383,10 +382,9 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     );
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(id, OfferEvent::Leave))
-                if id == Some(my_id) =>
+                if *id == Some(my_id) =>
             {
                 state.on_leave(
                     self.on_leave.as_ref().map(std::convert::AsRef::as_ref),
@@ -394,10 +392,10 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
 
                 if self.forward_drag_as_cursor {
                     let drag_cursor = mouse::Cursor::Unavailable;
-                    let event = Event::Mouse(mouse::Event::CursorLeft);
-                    self.container.as_widget_mut().on_event(
+                    let fwd_event = Event::Mouse(mouse::Event::CursorLeft);
+                    self.container.as_widget_mut().update(
                         &mut tree.children[0],
-                        event,
+                        &fwd_event,
                         layout,
                         drag_cursor,
                         renderer,
@@ -407,14 +405,13 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     );
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(id, OfferEvent::Motion { x, y }))
-                if id == Some(my_id) =>
+                if *id == Some(my_id) =>
             {
                 if let Some(msg) = state.on_motion(
-                    x,
-                    y,
+                    *x,
+                    *y,
                     self.on_motion.as_ref().map(std::convert::AsRef::as_ref),
                     self.on_enter.as_ref().map(std::convert::AsRef::as_ref),
                     (),
@@ -425,13 +422,13 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                 if self.forward_drag_as_cursor {
                     #[allow(clippy::cast_possible_truncation)]
                     let drag_cursor =
-                        mouse::Cursor::Available((x as f32, y as f32).into());
-                    let event = Event::Mouse(mouse::Event::CursorMoved {
+                        mouse::Cursor::Available((*x as f32, *y as f32).into());
+                    let fwd_event = Event::Mouse(mouse::Event::CursorMoved {
                         position: drag_cursor.position().unwrap(),
                     });
-                    self.container.as_widget_mut().on_event(
+                    self.container.as_widget_mut().update(
                         &mut tree.children[0],
-                        event,
+                        &fwd_event,
                         layout,
                         drag_cursor,
                         renderer,
@@ -441,10 +438,9 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     );
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(id, OfferEvent::LeaveDestination))
-                if id == Some(my_id) =>
+                if *id == Some(my_id) =>
             {
                 if let Some(msg) = state.on_leave(
                     self.on_leave.as_ref().map(std::convert::AsRef::as_ref),
@@ -452,10 +448,9 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     shell.publish(msg);
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(id, OfferEvent::Drop))
-                if id == Some(my_id) =>
+                if *id == Some(my_id) =>
             {
                 if let Some(msg) = state.on_drop(
                     self.on_drop.as_ref().map(std::convert::AsRef::as_ref),
@@ -463,14 +458,13 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     shell.publish(msg);
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(
                 id,
                 OfferEvent::SelectedAction(action),
-            )) if id == Some(my_id) => {
+            )) if *id == Some(my_id) => {
                 if let Some(msg) = state.on_action_selected(
-                    action,
+                    *action,
                     self.on_action_selected
                         .as_ref()
                         .map(std::convert::AsRef::as_ref),
@@ -478,29 +472,26 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
                     shell.publish(msg);
                 }
                 shell.capture_event();
-                return;
             }
             Event::Dnd(DndEvent::Offer(
                 id,
                 OfferEvent::Data { data, mime_type },
-            )) if id == Some(my_id) => {
-                if let (Some(msg), ret) = state.on_data_received(
-                    mime_type,
-                    data,
+            )) if *id == Some(my_id) => {
+                if let (Some(msg), _ret) = state.on_data_received(
+                    mime_type.clone(),
+                    data.clone(),
                     self.on_data_received
                         .as_ref()
                         .map(std::convert::AsRef::as_ref),
                     self.on_finish.as_ref().map(std::convert::AsRef::as_ref),
                 ) {
                     shell.publish(msg);
-                    return ret;
+                    return;
                 }
                 shell.capture_event();
-                return;
             }
             _ => {}
         }
-        event::Status::Ignored
     }
 
     fn mouse_interaction(
@@ -546,6 +537,7 @@ impl<'a, Message: 'static> Widget<Message, iced::Theme, iced::Renderer>
         tree: &'b mut Tree,
         layout: Layout<'_>,
         renderer: &iced::Renderer,
+        _viewport: &Rectangle,
         translation: iced::Vector,
     ) -> Option<overlay::Element<'b, Message, iced::Theme, iced::Renderer>>
     {

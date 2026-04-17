@@ -52,14 +52,13 @@ pub enum Event {
 }
 
 pub fn subscription(path: &str) -> iced::Subscription<Event> {
-    let path = path.to_string();
-    iced::Subscription::run_with_id(
-        "pw",
-        iced::stream::channel(16, |sender| async {
+    iced::Subscription::run_with(path.to_string(), |path| {
+        let path = path.clone();
+        iced::stream::channel(16, async move |sender| {
             thread::spawn(move || pipewire_thread(&path, sender));
-            std::future::pending().await
-        }),
-    )
+            std::future::pending::<()>().await
+        })
+    })
 }
 
 fn pipewire_thread(

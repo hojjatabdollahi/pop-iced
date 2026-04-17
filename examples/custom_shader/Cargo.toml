@@ -6,7 +6,7 @@ edition = "2024"
 
 [dependencies]
 iced.workspace = true
-iced.features = ["debug", "image", "advanced"]
+iced.features = ["debug", "image", "advanced", "wgpu"]
 
 image.workspace = true
 bytemuck.workspace = true

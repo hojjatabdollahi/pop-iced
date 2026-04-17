@@ -191,7 +191,7 @@ impl Styling {
     fn subscription(&self) -> Subscription<Message> {
         keyboard::listen().filter_map(|event| {
             let keyboard::Event::KeyPressed {
-                modified_key: keyboard::Key::Named(modified_key),
+                modified_key,
                 repeat: false,
                 ..
             } = event
@@ -199,14 +199,16 @@ impl Styling {
                 return None;
             };
 
-            match modified_key {
-                keyboard::key::Named::ArrowUp
-                | keyboard::key::Named::ArrowLeft => {
+            match modified_key.as_ref() {
+                keyboard::Key::Named(keyboard::key::Named::ArrowUp)
+                | keyboard::Key::Named(keyboard::key::Named::ArrowLeft) => {
                     Some(Message::PreviousTheme)
                 }
-                keyboard::key::Named::ArrowDown
-                | keyboard::key::Named::ArrowRight => Some(Message::NextTheme),
-                keyboard::key::Named::Space => Some(Message::ClearTheme),
+                keyboard::Key::Named(keyboard::key::Named::ArrowDown)
+                | keyboard::Key::Named(keyboard::key::Named::ArrowRight) => {
+                    Some(Message::NextTheme)
+                }
+                keyboard::Key::Character(" ") => Some(Message::ClearTheme),
                 _ => None,
             }
         })

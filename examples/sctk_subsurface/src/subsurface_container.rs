@@ -1,6 +1,6 @@
 //! Distribute content vertically.
 use iced::core::alignment::{self, Alignment};
-use iced::core::event::{self, Event};
+use iced::core::event::Event;
 use iced::core::layout;
 use iced::core::mouse;
 use iced::core::overlay;
@@ -223,7 +223,7 @@ where
     }
 
     fn layout(
-        &self,
+        &mut self,
         tree: &mut Tree,
         renderer: &Renderer,
         limits: &layout::Limits,
@@ -231,7 +231,7 @@ where
         let limits = limits.max_width(self.max_width);
         let nodes = self
             .children
-            .iter()
+            .iter_mut()
             .zip(tree.children.iter_mut())
             .map(|c| {
                 let size = c.0.as_widget().size();
@@ -240,7 +240,7 @@ where
                     size.width,
                     size.height,
                     self.padding,
-                    |limits| c.0.as_widget().layout(c.1, renderer, limits),
+                    |limits| c.0.as_widget_mut().layout(c.1, renderer, limits),
                     |content, size| {
                         content.align(self.align, Alignment::Start, size)
                     },
@@ -254,20 +254,21 @@ where
     }
 
     fn operate(
-        &self,
+        &mut self,
         tree: &mut Tree,
         layout: Layout<'_>,
         renderer: &Renderer,
         operation: &mut dyn Operation,
     ) {
-        operation.container(None, layout.bounds(), &mut |operation| {
+        operation.container(None, layout.bounds());
+        operation.traverse(&mut |operation| {
             self.children
-                .iter()
+                .iter_mut()
                 .zip(&mut tree.children)
                 .zip(layout.children())
                 .for_each(|((child, state), layout)| {
                     child
-                        .as_widget()
+                        .as_widget_mut()
                         .operate(state, layout, renderer, operation);
                 });
         });
@@ -276,31 +277,30 @@ where
     fn update(
         &mut self,
         tree: &mut Tree,
-        event: Event,
+        event: &Event,
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
-    ) -> event::Status {
+    ) {
         self.children
             .iter_mut()
             .zip(&mut tree.children)
             .zip(layout.children())
-            .map(|((child, state), layout)| {
-                child.as_widget_mut().on_event(
+            .for_each(|((child, state), layout)| {
+                child.as_widget_mut().update(
                     state,
-                    event.clone(),
+                    event,
                     layout,
                     cursor,
                     renderer,
                     clipboard,
                     shell,
                     viewport,
-                )
-            })
-            .fold(event::Status::Ignored, event::Status::merge)
+                );
+            });
     }
 
     fn mouse_interaction(
@@ -358,8 +358,9 @@ where
     fn overlay<'b>(
         &'b mut self,
         tree: &'b mut Tree,
-        layout: Layout<'_>,
+        layout: Layout<'b>,
         renderer: &Renderer,
+        viewport: &Rectangle,
         translation: Vector,
     ) -> Option<overlay::Element<'b, Message, Theme, Renderer>> {
         overlay::from_children(
@@ -367,6 +368,7 @@ where
             tree,
             layout,
             renderer,
+            viewport,
             translation,
         )
     }

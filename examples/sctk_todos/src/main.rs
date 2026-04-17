@@ -7,22 +7,21 @@ use iced::platform_specific::shell::commands::{
 };
 use iced::theme::{self, Theme};
 use iced::widget::{
-    self, button, checkbox, column, container, row, scrollable, text,
+    self, button, checkbox, column, container, operation, row, scrollable, text,
     text_input, Text,
 };
 use iced::window::Settings;
 use iced::{window, Application, Element, Program, Task};
 use iced::{Color, Font, Length, Subscription};
-use iced_core::id::Id;
-use iced_core::keyboard::key::Named;
-use iced_core::layout::Limits;
-use iced_core::{id, keyboard};
+use iced::core::keyboard::key::Named;
+use iced::core::layout::Limits;
+use iced::core::keyboard;
 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
-static INPUT_ID: Lazy<text_input::Id> = Lazy::new(|| text_input::Id::unique());
+static INPUT_ID: Lazy<widget::Id> = Lazy::new(|| widget::Id::unique());
 
 pub fn main() -> iced::Result {
     // let env = Env::default()
@@ -30,10 +29,11 @@ pub fn main() -> iced::Result {
     //     .write_style_or("MY_LOG_STYLE", "always");
 
     // env_logger::init_from_env(env);
-    iced::daemon(Todos::title, Todos::update, Todos::view)
+    iced::daemon(Todos::new, Todos::update, Todos::view)
         .subscription(Todos::subscription)
+        .title(Todos::title)
         .font(include_bytes!("../fonts/icons.ttf").as_slice())
-        .run_with(Todos::new)
+        .run()
 }
 
 #[derive(Debug)]
@@ -136,7 +136,7 @@ impl Todos {
                     _ => {}
                 }
 
-                text_input::focus(INPUT_ID.clone())
+                operation::focus(INPUT_ID.clone())
             }
             Todos::Loaded(state) => {
                 let mut saved = false;
@@ -176,8 +176,8 @@ impl Todos {
                             if should_focus {
                                 let id = MyTask::text_input_id(i);
                                 Task::batch(vec![
-                                    text_input::focus(INPUT_ID.clone()),
-                                    text_input::select_all(INPUT_ID.clone()),
+                                    operation::focus(INPUT_ID.clone()),
+                                    operation::select_all(INPUT_ID.clone()),
                                 ])
                             } else {
                                 Task::none()
@@ -194,9 +194,9 @@ impl Todos {
                     }
                     Message::TabPressed { shift } => {
                         if shift {
-                            widget::focus_previous()
+                            operation::focus_previous()
                         } else {
-                            widget::focus_next()
+                            operation::focus_next()
                         }
                     }
                     Message::CloseRequested(_) => {
@@ -325,7 +325,7 @@ impl Todos {
                 }
                 (
                     Event::PlatformSpecific(event::PlatformSpecific::Wayland(
-                        event::wayland::Event::OverlapNotify(e),
+                        event::wayland::Event::OverlapNotify(e, _, _),
                     )),
                     _,
                     _,
@@ -370,8 +370,8 @@ pub enum TaskMessage {
 }
 
 impl MyTask {
-    fn text_input_id(i: usize) -> text_input::Id {
-        text_input::Id::new(format!("task-{}", i))
+    fn text_input_id(i: usize) -> widget::Id {
+        widget::Id::new(format!("task-{}", i))
     }
 
     fn new(description: String) -> Self {
@@ -405,7 +405,8 @@ impl MyTask {
     fn view(&self, i: usize) -> Element<TaskMessage> {
         match &self.state {
             TaskState::Idle => {
-                let checkbox = checkbox(&self.description, self.completed)
+                let checkbox = checkbox(self.completed)
+                    .label(&self.description)
                     .width(Length::Fill)
                     .on_toggle(TaskMessage::Completed);
 
@@ -525,7 +526,7 @@ fn empty_message(message: &str) -> Element<'_, Message> {
 }
 
 // Fonts
-const ICONS: Font = Font::with_name("Iced-Todos-Icons");
+const ICONS: Font = Font::new("Iced-Todos-Icons");
 
 fn icon(unicode: char) -> Text<'static> {
     text(unicode.to_string())

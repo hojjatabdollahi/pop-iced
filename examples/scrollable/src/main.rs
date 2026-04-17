@@ -1,10 +1,9 @@
-use iced::widget::scrollable::{self, Properties, Scrollbar, Scroller};
+use iced::widget::scrollable::{self, Anchor, RelativeOffset, Viewport};
 use iced::widget::{
-    button, column, container, operation, progress_bar, radio, row, scrollable,
-    slider, space, text,
+    button, column, container, operation, progress_bar, radio, row,
+    scrollable as make_scrollable, slider, space, text,
 };
 use iced::{Border, Center, Color, Element, Fill, Task, Theme};
-use iced_core::id::Id;
 
 pub fn main() -> iced::Result {
     iced::application(
@@ -21,8 +20,8 @@ struct ScrollableDemo {
     scrollbar_width: u32,
     scrollbar_margin: u32,
     scroller_width: u32,
-    current_scroll_offset: scrollable::RelativeOffset,
-    anchor: scrollable::Anchor,
+    current_scroll_offset: RelativeOffset,
+    anchor: Anchor,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Copy)]
@@ -35,13 +34,13 @@ enum Direction {
 #[derive(Debug, Clone)]
 enum Message {
     SwitchDirection(Direction),
-    AlignmentChanged(scrollable::Anchor),
+    AlignmentChanged(Anchor),
     ScrollbarWidthChanged(u32),
     ScrollbarMarginChanged(u32),
     ScrollerWidthChanged(u32),
     ScrollToBeginning,
     ScrollToEnd,
-    Scrolled(scrollable::Viewport),
+    Scrolled(Viewport),
 }
 
 impl ScrollableDemo {
@@ -51,21 +50,21 @@ impl ScrollableDemo {
             scrollbar_width: 10,
             scrollbar_margin: 0,
             scroller_width: 10,
-            current_scroll_offset: scrollable::RelativeOffset::START,
-            anchor: scrollable::Anchor::Start,
+            current_scroll_offset: RelativeOffset::START,
+            anchor: Anchor::Start,
         }
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::SwitchDirection(direction) => {
-                self.current_scroll_offset = scrollable::RelativeOffset::START;
+                self.current_scroll_offset = RelativeOffset::START;
                 self.scrollable_direction = direction;
 
                 operation::snap_to(SCROLLABLE, self.current_scroll_offset)
             }
             Message::AlignmentChanged(alignment) => {
-                self.current_scroll_offset = scrollable::RelativeOffset::START;
+                self.current_scroll_offset = RelativeOffset::START;
                 self.anchor = alignment;
 
                 operation::snap_to(SCROLLABLE, self.current_scroll_offset)
@@ -86,12 +85,12 @@ impl ScrollableDemo {
                 Task::none()
             }
             Message::ScrollToBeginning => {
-                self.current_scroll_offset = scrollable::RelativeOffset::START;
+                self.current_scroll_offset = RelativeOffset::START;
 
                 operation::snap_to(SCROLLABLE, self.current_scroll_offset)
             }
             Message::ScrollToEnd => {
-                self.current_scroll_offset = scrollable::RelativeOffset::END;
+                self.current_scroll_offset = RelativeOffset::END;
 
                 operation::snap_to(SCROLLABLE, self.current_scroll_offset)
             }
@@ -154,13 +153,13 @@ impl ScrollableDemo {
             text("Scrollable alignment:"),
             radio(
                 "Start",
-                scrollable::Anchor::Start,
+                Anchor::Start,
                 Some(self.anchor),
                 Message::AlignmentChanged,
             ),
             radio(
                 "End",
-                scrollable::Anchor::End,
+                Anchor::End,
                 Some(self.anchor),
                 Message::AlignmentChanged,
             )
@@ -188,7 +187,7 @@ impl ScrollableDemo {
 
         let scrollable_content: Element<Message> =
             Element::from(match self.scrollable_direction {
-                Direction::Vertical => scrollable(
+                Direction::Vertical => make_scrollable(
                     column![
                         scroll_to_end_button(),
                         text("Beginning!"),
@@ -214,7 +213,7 @@ impl ScrollableDemo {
                 .id(SCROLLABLE)
                 .on_scroll(Message::Scrolled)
                 .auto_scroll(true),
-                Direction::Horizontal => scrollable(
+                Direction::Horizontal => make_scrollable(
                     row![
                         scroll_to_end_button(),
                         text("Beginning!"),
@@ -241,7 +240,7 @@ impl ScrollableDemo {
                 .id(SCROLLABLE)
                 .on_scroll(Message::Scrolled)
                 .auto_scroll(true),
-                Direction::Multi => scrollable(
+                Direction::Multi => make_scrollable(
                     //horizontal content
                     row![
                         column![
