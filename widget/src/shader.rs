@@ -3,6 +3,7 @@ mod program;
 
 pub use program::Program;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
@@ -91,6 +92,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

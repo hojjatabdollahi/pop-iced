@@ -1,4 +1,5 @@
 use crate::container;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -245,6 +246,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
         is_picked: bool,
@@ -258,6 +260,7 @@ where
                 children.next().unwrap(),
                 cursor,
                 renderer,
+                clipboard,
                 shell,
                 viewport,
             );
@@ -274,6 +277,7 @@ where
                 body_layout,
                 cursor,
                 renderer,
+                clipboard,
                 shell,
                 viewport,
             );

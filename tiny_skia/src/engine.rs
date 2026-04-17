@@ -150,12 +150,12 @@ impl Engine {
                     pixmap.as_ref(),
                     &tiny_skia::PixmapPaint::default(),
                     tiny_skia::Transform::default(),
-                    Some(clip_mask),
+                    clip_mask,
                 );
             }
         }
 
-        let clip_mask = (!physical_bounds.is_within(&clip_bounds)).then_some(clip_mask as &_);
+        let clip_mask = clip_mask.filter(|_| !physical_bounds.is_within(&clip_bounds));
 
         pixels.fill_path(
             &path,

@@ -79,6 +79,7 @@ pub use state::State;
 pub use title_bar::TitleBar;
 
 use crate::container;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay::{self, Group};
@@ -500,6 +501,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -530,7 +532,7 @@ where
             let is_picked = picked_pane == Some(pane);
 
             content.update(
-                tree, event, layout, cursor, renderer, shell,
+                tree, event, layout, cursor, renderer, clipboard, shell,
                 viewport, is_picked,
             );
         }

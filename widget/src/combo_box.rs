@@ -54,6 +54,7 @@
 //!     }
 //! }
 //! ```
+use crate::core::clipboard::Clipboard;
 use crate::core::keyboard;
 use crate::core::keyboard::key;
 use crate::core::layout::{self, Layout};
@@ -555,6 +556,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -582,6 +584,7 @@ where
             layout,
             cursor,
             renderer,
+            clipboard,
             &mut local_shell,
             viewport,
         );
@@ -592,7 +595,6 @@ where
 
         shell.request_redraw_at(local_shell.redraw_request());
         shell.request_input_method(local_shell.input_method());
-        shell.clipboard_mut().merge(local_shell.clipboard_mut());
 
         // Then finally react to them here
         for message in local_messages {
@@ -775,6 +777,7 @@ where
                     layout,
                     mouse::Cursor::Unavailable,
                     renderer,
+                    clipboard,
                     &mut local_shell,
                     viewport,
                 );

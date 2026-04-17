@@ -1,4 +1,5 @@
 //! Generate messages when content pops in and out of view.
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -191,6 +192,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -267,6 +269,7 @@ where
             layout,
             cursor,
             renderer,
+            clipboard,
             shell,
             viewport,
         );

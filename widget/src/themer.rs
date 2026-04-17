@@ -1,5 +1,6 @@
 use crate::container;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
@@ -113,12 +114,13 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
         self.content
             .as_widget_mut()
-            .update(tree, event, layout, cursor, renderer, shell, viewport);
+            .update(tree, event, layout, cursor, renderer, clipboard, shell, viewport);
     }
 
     fn mouse_interaction(
@@ -224,11 +226,12 @@ where
                 layout: Layout<'_>,
                 cursor: mouse::Cursor,
                 renderer: &Renderer,
+                clipboard: &mut dyn Clipboard,
                 shell: &mut Shell<'_, Message>,
             ) {
-                self.content
-                    .as_overlay_mut()
-                    .update(event, layout, cursor, renderer, shell);
+                self.content.as_overlay_mut().update(
+                    event, layout, cursor, renderer, clipboard, shell,
+                );
             }
 
             fn operate(

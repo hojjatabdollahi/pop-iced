@@ -36,6 +36,7 @@ use iced_runtime::core::widget::Id;
 #[cfg(feature = "a11y")]
 use std::borrow::Cow;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
 use crate::core::layout;
 use crate::core::mouse;
@@ -371,6 +372,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

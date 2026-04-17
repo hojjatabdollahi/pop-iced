@@ -2650,6 +2650,9 @@ where
         Action::PlatformSpecific(a) => {
             platform_specific.send_action(a);
         }
+        Action::Event { window, event } => {
+            events.push((Some(window), event));
+        }
     }
     false
 }

@@ -1,4 +1,5 @@
 //! Distribute content horizontally.
+use crate::core::clipboard::Clipboard;
 use crate::core::alignment::{self, Alignment};
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
@@ -269,6 +270,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -285,6 +287,7 @@ where
                 c_layout.with_virtual_offset(layout.virtual_offset()),
                 cursor,
                 renderer,
+                clipboard,
                 shell,
                 viewport);
         }
@@ -619,11 +622,12 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
         self.row
-            .update(tree, event, layout, cursor, renderer, shell, viewport);
+            .update(tree, event, layout, cursor, renderer, clipboard, shell, viewport);
     }
 
     fn mouse_interaction(

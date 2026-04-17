@@ -56,6 +56,7 @@
 //!     column![a, b, c, all].into()
 //! }
 //! ```
+use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
 use crate::core::border::{self, Border};
 use crate::core::layout;
@@ -341,6 +342,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

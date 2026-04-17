@@ -2,6 +2,7 @@
 
 use iced_renderer::core::mouse::Click;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
@@ -258,6 +259,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -267,6 +269,7 @@ where
             layout,
             cursor,
             renderer,
+            clipboard,
             shell,
             viewport,
         );

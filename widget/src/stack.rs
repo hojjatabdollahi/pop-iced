@@ -1,5 +1,6 @@
 //! Display content on top of other content.
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
@@ -235,6 +236,7 @@ where
         layout: Layout<'_>,
         mut cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -255,7 +257,7 @@ where
         {
             child
                 .as_widget_mut()
-                .update(tree, event, layout, cursor, renderer, shell,
+                .update(tree, event, layout, cursor, renderer, clipboard, shell,
                 viewport);
 
             if shell.is_event_captured() {

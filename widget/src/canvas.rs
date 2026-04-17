@@ -60,6 +60,7 @@ pub use crate::graphics::geometry::{
     Text, fill, gradient, path, stroke,
 };
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout::{self, Layout};
 use crate::core::mouse;
@@ -221,6 +222,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {

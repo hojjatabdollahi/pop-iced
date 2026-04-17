@@ -1,3 +1,4 @@
+use crate::Clipboard;
 use crate::event::{self, Event};
 use crate::id::Id;
 use crate::layout;
@@ -346,6 +347,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, B>,
         viewport: &Rectangle,
     ) {
@@ -358,6 +360,7 @@ where
             layout,
             cursor,
             renderer,
+            clipboard,
             &mut local_shell,
             viewport,
         );
@@ -510,12 +513,13 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
-        self.element
-            .widget
-            .update(tree, event, layout, cursor, renderer, shell, viewport);
+        self.element.widget.update(
+            tree, event, layout, cursor, renderer, clipboard, shell, viewport,
+        );
     }
 
     fn draw(

@@ -1,6 +1,7 @@
 //! Keyed columns distribute content vertically while keeping continuity.
 //! Distribute content vertically.
 
+use crate::core::clipboard::Clipboard;
 use crate::core::event;
 use crate::core::layout;
 use crate::core::mouse;
@@ -308,6 +309,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -319,7 +321,7 @@ where
         {
             child
                 .as_widget_mut()
-                .update(tree, event, c_layout.with_virtual_offset(layout.virtual_offset()), cursor, renderer, shell,
+                .update(tree, event, c_layout.with_virtual_offset(layout.virtual_offset()), cursor, renderer, clipboard, shell,
                 viewport);
         }
     }

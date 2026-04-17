@@ -213,6 +213,7 @@ where
                 layout,
                 cursor,
                 renderer,
+                clipboard,
                 shell,
                 viewport,
             );

@@ -7,6 +7,7 @@ pub use element::Element;
 pub use group::Group;
 pub use nested::Nested;
 
+use crate::Clipboard;
 use crate::layout;
 use crate::mouse;
 use crate::renderer;
@@ -55,6 +56,7 @@ where
         _layout: Layout<'_>,
         _cursor: mouse::Cursor,
         _renderer: &Renderer,
+        _clipboard: &mut dyn Clipboard,
         _shell: &mut Shell<'_, Message>,
     ) {
     }

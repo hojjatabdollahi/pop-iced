@@ -35,6 +35,7 @@ pub use crate::slider::{
     default,
 };
 
+use crate::core::clipboard::Clipboard;
 use crate::core::border::Border;
 use crate::core::keyboard;
 use crate::core::keyboard::key::{self, Key};
@@ -251,6 +252,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         _renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

@@ -1016,7 +1016,7 @@ where
                         shaping: text::Shaping::Advanced,
                         wrapping: self.wrapping,
                         ellipsize: self.ellipsize,
-                        hint_factor: renderer.scale_factor(),
+            hint_factor: None,
                     },
                     text_bounds.position(),
                     style.placeholder,
@@ -1041,11 +1041,7 @@ where
                         Rectangle::new(
                             position + translation,
                             Size::new(
-                                if renderer::CRISP {
-                                    (1.0 / renderer.scale_factor().unwrap_or(1.0)).max(1.0)
-                                } else {
-                                    1.0
-                                },
+                                1.0,
                                 self.line_height
                                     .to_absolute(self.text_size.unwrap_or_else(
                                         || renderer.default_size(),
@@ -1079,10 +1075,7 @@ where
                         );
                     }
                 }
-                Selection::Caret(_) => {
-                    // Drawing an empty quad helps some renderers to track the damage of the blinking cursor
-                    renderer.fill_quad(renderer::Quad::default(), Color::TRANSPARENT);
-                }
+                Selection::Caret(_) => {}
             }
         }
     }

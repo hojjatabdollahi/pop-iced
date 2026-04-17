@@ -1,5 +1,6 @@
 pub use crate::Overlay;
 
+use crate::Clipboard;
 use crate::layout;
 use crate::mouse;
 use crate::renderer;
@@ -89,6 +90,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, B>,
     ) {
         let mut local_messages = Vec::new();
@@ -99,6 +101,7 @@ where
             layout,
             cursor,
             renderer,
+            clipboard,
             &mut local_shell,
         );
 

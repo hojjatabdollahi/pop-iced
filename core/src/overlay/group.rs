@@ -1,3 +1,4 @@
+use crate::Clipboard;
 use crate::layout;
 use crate::mouse;
 use crate::overlay;
@@ -77,12 +78,13 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         for (child, layout) in self.children.iter_mut().zip(layout.children()) {
             child
                 .as_overlay_mut()
-                .update(event, layout, cursor, renderer, shell);
+                .update(event, layout, cursor, renderer, clipboard, shell);
         }
     }
 

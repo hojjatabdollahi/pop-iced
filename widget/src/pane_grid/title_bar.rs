@@ -1,4 +1,5 @@
 use crate::container;
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -439,6 +440,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -465,6 +467,7 @@ where
                             .with_virtual_offset(layout.virtual_offset()),
                         cursor,
                         renderer,
+                        clipboard,
                         shell,
                         viewport,
                     );
@@ -478,6 +481,7 @@ where
                             .with_virtual_offset(layout.virtual_offset()),
                         cursor,
                         renderer,
+                        clipboard,
                         shell,
                         viewport,
                     );
@@ -490,6 +494,7 @@ where
                         .with_virtual_offset(layout.virtual_offset()),
                     cursor,
                     renderer,
+                    clipboard,
                     shell,
                     viewport,
                 );
@@ -503,6 +508,7 @@ where
                 title_layout.with_virtual_offset(layout.virtual_offset()),
                 cursor,
                 renderer,
+                clipboard,
                 shell,
                 viewport,
             );

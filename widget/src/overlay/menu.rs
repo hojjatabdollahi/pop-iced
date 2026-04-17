@@ -1,4 +1,5 @@
 //! Build and show dropdown menus.
+use crate::core::clipboard::Clipboard;
 use crate::core::alignment;
 use crate::core::border::{self, Border};
 use crate::core::layout::{self, Layout};
@@ -286,13 +287,15 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
     ) {
         let bounds = layout.bounds();
 
-        self.list
-            .update(self.tree, event, layout, cursor, renderer, shell,
-            &bounds);
+        self.list.update(
+            self.tree, event, layout, cursor, renderer, clipboard, shell,
+            &bounds,
+        );
     }
 
     fn mouse_interaction(
@@ -415,6 +418,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
     ) {

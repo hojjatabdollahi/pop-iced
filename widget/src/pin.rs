@@ -19,6 +19,7 @@
 //!         .into()
 //! }
 //! ```
+use crate::core::clipboard::Clipboard;
 use crate::core::layout;
 use crate::core::mouse;
 use crate::core::overlay;
@@ -180,6 +181,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -189,6 +191,7 @@ where
             layout.children().next().unwrap(),
             cursor,
             renderer,
+            clipboard,
             shell,
             viewport,
         );

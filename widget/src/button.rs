@@ -23,6 +23,7 @@ use iced_runtime::{Task, keyboard, task};
 #[cfg(feature = "a11y")]
 use std::borrow::Cow;
 
+use crate::core::clipboard::Clipboard;
 use crate::core::border::{self, Border};
 use crate::core::layout;
 use crate::core::mouse;
@@ -350,6 +351,7 @@ where
         layout: Layout<'_>,
         cursor: mouse::Cursor,
         renderer: &Renderer,
+        clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
     ) {
@@ -363,6 +365,7 @@ where
                 .with_virtual_offset(layout.virtual_offset()),
             cursor,
             renderer,
+            clipboard,
             shell,
             viewport,
         );
